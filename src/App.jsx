@@ -28,7 +28,9 @@ function App() {
     const fetchTrips = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8000/escape/all");
+        const response = await axios.get(
+          "https://crm-ghar-se-frar.onrender.com/escape/all"
+        );
 
         // Map the API response to match the expected format
         const formattedTrips = response.data.map((trip) => ({

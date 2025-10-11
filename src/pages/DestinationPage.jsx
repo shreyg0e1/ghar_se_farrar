@@ -11,7 +11,7 @@ const DestinationPage = () => {
   const details = useParams();
   const detailsId = details?.id;
   console.log(detailsId);
-  const URL = "http://localhost:8000";
+  const URL = "https://crm-ghar-se-frar.onrender.com";
   const [activeFilter, setActiveFilter] = useState("bestSelling");
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);

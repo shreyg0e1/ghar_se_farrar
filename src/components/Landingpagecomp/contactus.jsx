@@ -42,10 +42,12 @@ const ContactUs = () => {
     setLoading(true);
 
     try {
-      const {data} = await axios.post("http://localhost:8000/contact/add", {
-       
-       ...formData,
-      });
+      const { data } = await axios.post(
+        "https://crm-ghar-se-frar.onrender.com/contact/add",
+        {
+          ...formData,
+        }
+      );
 
      
 

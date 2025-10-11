@@ -13,7 +13,7 @@ export default function TripDurationCards({ tourData }) {
       const packageId = localStorage.getItem("id");
       if (packageId) {
         const response = await axios.get(
-          `http://localhost:8000/package/${packageId}`
+          `https://crm-ghar-se-frar.onrender.com/package/${packageId}`
         );
         setPackageData(response.data.packageData);
       }

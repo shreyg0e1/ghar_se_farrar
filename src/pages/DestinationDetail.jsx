@@ -22,7 +22,7 @@ import CancellationPolicy from "../components/DestinationDetailcomp/Cancellation
 const DestinationDetailPage = () => {
   const { id } = useParams();
   console.log("Destination Details->", id);
-  const URL = "http://localhost:8000";
+  const URL = "https://crm-ghar-se-frar.onrender.com";
   const [activeTab, setActiveTab] = useState("Itinerary");
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
