@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@keyframes float-scale {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.05) translateY(-8px);
+  }
+}
+
+.animate-float-scale {
+  animation: float-scale 6s ease-in-out infinite;
+}
+
