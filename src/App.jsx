@@ -15,8 +15,9 @@ import BlogHeroSection from "./components/HeaderNavigation/BlogComp/BlogHeroSect
 import FiltersButtonBlog from "./components/HeaderNavigation/BlogComp/FiltersButtonBlog";
 import BlogCards from "./components/HeaderNavigation/BlogComp/BlogCards";
 import GalleryMasonryGrid from "./components/HeaderNavigation/BlogComp/GalleryMasonryGrid";
-import AboutUs from "./components/HeaderNavigation/AboutUs";
-import PaymentPage from "./components/HeaderNavigation/PaymentPage";
+import PaymentPage from "./pages/PaymentPage";
+import AboutUs from "./pages/AboutUs";
+
 
 function App() {
   const [allTrips, setAllTrips] = useState([]);
@@ -100,6 +101,8 @@ function App() {
           path="/destination-detail/:id"
           element={<DestinationDetailPage />}
         />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/about" element={<AboutUs />} />
       </Routes>
       <PricelessFooter />
     </BrowserRouter>

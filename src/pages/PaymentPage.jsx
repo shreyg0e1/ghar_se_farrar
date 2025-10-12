@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const PaymentPage = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardholderName: '',
-    country: '',
-    address: '',
-    city: '',
-    zipCode: '',
-    upiId: '',
-    bankAccount: ''
+    fullName: "",
+    email: "",
+    phone: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    cardholderName: "",
+    country: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    upiId: "",
+    bankAccount: "",
   });
 
   const [selectedPackage, setSelectedPackage] = useState({
@@ -23,51 +23,51 @@ const PaymentPage = () => {
     duration: "7 Days / 6 Nights",
     price: 89999,
     travelers: 2,
-    image: "/images/bali-package.jpg"
+    image: "/images/bali-package.jpg",
   });
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleCardNumberChange = (e) => {
-    let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+    let value = e.target.value.replace(/\s/g, "").replace(/\D/g, "");
     if (value.length > 0) {
-      value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+      value = value.match(new RegExp(".{1,4}", "g")).join(" ");
     }
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      cardNumber: value
+      cardNumber: value,
     }));
   };
 
   const handleExpiryChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '');
+    let value = e.target.value.replace(/\D/g, "");
     if (value.length >= 2) {
-      value = value.slice(0, 2) + '/' + value.slice(2, 4);
+      value = value.slice(0, 2) + "/" + value.slice(2, 4);
     }
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      expiryDate: value
+      expiryDate: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
-    
+
     // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     setIsProcessing(false);
-    alert('Payment Successful! Your adventure awaits! 🎉');
+    alert("Payment Successful! Your adventure awaits! 🎉");
   };
 
   const travelPackages = [
@@ -77,7 +77,7 @@ const PaymentPage = () => {
       duration: "7 Days / 6 Nights",
       price: 89999,
       travelers: 2,
-      image: "/images/bali-package.jpg"
+      image: "/images/bali-package.jpg",
     },
     {
       id: 2,
@@ -85,7 +85,7 @@ const PaymentPage = () => {
       duration: "5 Days / 4 Nights",
       price: 125999,
       travelers: 2,
-      image: "/images/swiss-package.jpg"
+      image: "/images/swiss-package.jpg",
     },
     {
       id: 3,
@@ -93,42 +93,42 @@ const PaymentPage = () => {
       duration: "8 Days / 7 Nights",
       price: 149999,
       travelers: 2,
-      image: "/images/tokyo-package.jpg"
-    }
+      image: "/images/tokyo-package.jpg",
+    },
   ];
 
   const addOns = [
     { name: "Travel Insurance", price: 2999, selected: true },
     { name: "Airport Transfer", price: 1999, selected: false },
     { name: "Adventure Activities Pack", price: 8999, selected: false },
-    { name: "Premium Dining Experience", price: 5999, selected: false }
+    { name: "Premium Dining Experience", price: 5999, selected: false },
   ];
 
   const paymentMethods = [
     {
-      id: 'card',
-      name: 'Credit/Debit Card',
-      icon: '💳',
-      description: 'Pay securely with your card'
+      id: "card",
+      name: "Credit/Debit Card",
+      icon: "💳",
+      description: "Pay securely with your card",
     },
     {
-      id: 'upi',
-      name: 'UPI Payment',
-      icon: '📱',
-      description: 'Instant payment with UPI'
+      id: "upi",
+      name: "UPI Payment",
+      icon: "📱",
+      description: "Instant payment with UPI",
     },
     {
-      id: 'bank',
-      name: 'Bank Transfer',
-      icon: '🏦',
-      description: 'Direct bank transfer'
+      id: "bank",
+      name: "Bank Transfer",
+      icon: "🏦",
+      description: "Direct bank transfer",
     },
     {
-      id: 'razorpay',
-      name: 'Razorpay',
-      icon: '🛡️',
-      description: 'Secure Razorpay gateway'
-    }
+      id: "razorpay",
+      name: "Razorpay",
+      icon: "🛡️",
+      description: "Secure Razorpay gateway",
+    },
   ];
 
   const subtotal = selectedPackage.price;
@@ -137,22 +137,23 @@ const PaymentPage = () => {
   const total = subtotal + tax + insurance;
 
   const formatIndianRupees = (amount) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-red-50 py-8 px-4">
+    <div className="min-h-screen mt-10 bg-gradient-to-br from-orange-50 via-amber-50 to-red-50 py-8 px-4">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8 text-center">
         <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
           Complete Your Journey
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Secure your spot for an unforgettable adventure. Your dream trip is just a payment away!
+          Secure your spot for an unforgettable adventure. Your dream trip is
+          just a payment away!
         </p>
       </div>
 
@@ -165,7 +166,9 @@ const PaymentPage = () => {
               <div className="relative h-48 bg-gradient-to-r from-[#E65F25] to-orange-400">
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="absolute bottom-4 left-4 text-white">
-                  <span className="bg-[#E65F25] px-3 py-1 rounded-full text-sm font-bold">FEATURED</span>
+                  <span className="bg-[#E65F25] px-3 py-1 rounded-full text-sm font-bold">
+                    FEATURED
+                  </span>
                 </div>
                 <div className="absolute top-4 right-4">
                   <span className="bg-white/20 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-bold">
@@ -174,21 +177,45 @@ const PaymentPage = () => {
                 </div>
               </div>
               <div className="p-6">
-                <h3 className="text-2xl font-black text-gray-900 mb-2">{selectedPackage.name}</h3>
+                <h3 className="text-2xl font-black text-gray-900 mb-2">
+                  {selectedPackage.name}
+                </h3>
                 <p className="text-gray-600 mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#E65F25]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-5 h-5 text-[#E65F25]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   {selectedPackage.duration}
                 </p>
                 <p className="text-gray-600 mb-4 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-[#E65F25]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <svg
+                    className="w-5 h-5 text-[#E65F25]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
                   </svg>
                   {selectedPackage.travelers} Travelers
                 </p>
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-3xl font-black text-[#E65F25]">{formatIndianRupees(selectedPackage.price)}</span>
+                  <span className="text-3xl font-black text-[#E65F25]">
+                    {formatIndianRupees(selectedPackage.price)}
+                  </span>
                   <span className="text-sm text-gray-500">per package</span>
                 </div>
                 <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold transition-all duration-300">
@@ -199,20 +226,29 @@ const PaymentPage = () => {
 
             {/* Add-ons */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-xl font-black text-gray-900 mb-4">Add to Your Experience</h3>
+              <h3 className="text-xl font-black text-gray-900 mb-4">
+                Add to Your Experience
+              </h3>
               <div className="space-y-3">
                 {addOns.map((addon, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 hover:bg-orange-50 rounded-lg transition-colors duration-200">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 hover:bg-orange-50 rounded-lg transition-colors duration-200"
+                  >
                     <div className="flex items-center gap-3">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={addon.selected}
                         className="w-4 h-4 text-[#E65F25] rounded focus:ring-[#E65F25]"
                         onChange={() => {}}
                       />
-                      <span className="font-medium text-gray-700">{addon.name}</span>
+                      <span className="font-medium text-gray-700">
+                        {addon.name}
+                      </span>
                     </div>
-                    <span className="font-semibold text-[#E65F25]">+{formatIndianRupees(addon.price)}</span>
+                    <span className="font-semibold text-[#E65F25]">
+                      +{formatIndianRupees(addon.price)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -220,7 +256,9 @@ const PaymentPage = () => {
 
             {/* Price Breakdown */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-xl font-black text-gray-900 mb-4">Price Summary</h3>
+              <h3 className="text-xl font-black text-gray-900 mb-4">
+                Price Summary
+              </h3>
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-600">
                   <span>Package Price</span>
@@ -237,15 +275,21 @@ const PaymentPage = () => {
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between text-lg font-black">
                     <span className="text-gray-900">Total Amount</span>
-                    <span className="text-[#E65F25]">{formatIndianRupees(total)}</span>
+                    <span className="text-[#E65F25]">
+                      {formatIndianRupees(total)}
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2 text-right">Inclusive of all taxes</p>
+                  <p className="text-xs text-gray-500 mt-2 text-right">
+                    Inclusive of all taxes
+                  </p>
                 </div>
               </div>
 
               {/* Indian Payment Icons */}
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm font-semibold text-gray-700 mb-3">We Accept:</p>
+                <p className="text-sm font-semibold text-gray-700 mb-3">
+                  We Accept:
+                </p>
                 <div className="flex flex-wrap gap-3">
                   <div className="bg-gray-100 px-3 py-2 rounded-lg">
                     <span className="text-xs font-medium">VISA</span>
@@ -286,13 +330,17 @@ const PaymentPage = () => {
                       onClick={() => setSelectedPaymentMethod(method.id)}
                       className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                         selectedPaymentMethod === method.id
-                          ? 'border-[#E65F25] bg-orange-50 shadow-md'
-                          : 'border-gray-200 hover:border-[#E65F25] hover:bg-orange-50'
+                          ? "border-[#E65F25] bg-orange-50 shadow-md"
+                          : "border-gray-200 hover:border-[#E65F25] hover:bg-orange-50"
                       }`}
                     >
                       <div className="text-2xl mb-2">{method.icon}</div>
-                      <div className="text-sm font-semibold text-gray-900">{method.name}</div>
-                      <div className="text-xs text-gray-600 mt-1">{method.description}</div>
+                      <div className="text-sm font-semibold text-gray-900">
+                        {method.name}
+                      </div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        {method.description}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -372,7 +420,7 @@ const PaymentPage = () => {
                 </div>
 
                 {/* Payment Method Specific Forms */}
-                {selectedPaymentMethod === 'card' && (
+                {selectedPaymentMethod === "card" && (
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
@@ -446,7 +494,7 @@ const PaymentPage = () => {
                   </div>
                 )}
 
-                {selectedPaymentMethod === 'upi' && (
+                {selectedPaymentMethod === "upi" && (
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
@@ -471,14 +519,15 @@ const PaymentPage = () => {
                       </div>
                       <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
                         <p className="text-sm text-orange-800">
-                          💡 <strong>Popular UPI Apps:</strong> Google Pay, PhonePe, Paytm, BHIM UPI
+                          💡 <strong>Popular UPI Apps:</strong> Google Pay,
+                          PhonePe, Paytm, BHIM UPI
                         </p>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {selectedPaymentMethod === 'bank' && (
+                {selectedPaymentMethod === "bank" && (
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
@@ -502,20 +551,33 @@ const PaymentPage = () => {
                         />
                       </div>
                       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-blue-900 mb-2">Bank Details for Transfer:</h4>
+                        <h4 className="font-semibold text-blue-900 mb-2">
+                          Bank Details for Transfer:
+                        </h4>
                         <div className="text-sm text-blue-800 space-y-1">
-                          <p><strong>Bank:</strong> HDFC Bank</p>
-                          <p><strong>Account Name:</strong> Gharsefaraar Travels Pvt Ltd</p>
-                          <p><strong>Account Number:</strong> 50100234567891</p>
-                          <p><strong>IFSC:</strong> HDFC0000123</p>
-                          <p><strong>Branch:</strong> Connaught Place, New Delhi</p>
+                          <p>
+                            <strong>Bank:</strong> HDFC Bank
+                          </p>
+                          <p>
+                            <strong>Account Name:</strong> Gharsefaraar Travels
+                            Pvt Ltd
+                          </p>
+                          <p>
+                            <strong>Account Number:</strong> 50100234567891
+                          </p>
+                          <p>
+                            <strong>IFSC:</strong> HDFC0000123
+                          </p>
+                          <p>
+                            <strong>Branch:</strong> Connaught Place, New Delhi
+                          </p>
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {selectedPaymentMethod === 'razorpay' && (
+                {selectedPaymentMethod === "razorpay" && (
                   <div>
                     <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
                       <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
@@ -525,16 +587,21 @@ const PaymentPage = () => {
                     </h3>
                     <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
                       <div className="text-4xl mb-4">🛡️</div>
-                      <h4 className="font-bold text-green-900 text-lg mb-2">Secure Payment Gateway</h4>
+                      <h4 className="font-bold text-green-900 text-lg mb-2">
+                        Secure Payment Gateway
+                      </h4>
                       <p className="text-green-800 mb-4">
-                        You will be redirected to Razorpay's secure payment page to complete your transaction safely.
+                        You will be redirected to Razorpay's secure payment page
+                        to complete your transaction safely.
                       </p>
                       <div className="flex justify-center gap-4">
                         <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
                           <span className="text-xs font-medium">PCI DSS</span>
                         </div>
                         <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
-                          <span className="text-xs font-medium">256-bit SSL</span>
+                          <span className="text-xs font-medium">
+                            256-bit SSL
+                          </span>
                         </div>
                         <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
                           <span className="text-xs font-medium">3D Secure</span>
@@ -549,27 +616,41 @@ const PaymentPage = () => {
                   <div className="flex flex-wrap items-center justify-center gap-6">
                     <div className="text-center">
                       <div className="w-12 h-8 bg-green-500 rounded flex items-center justify-center mx-auto mb-2">
-                        <span className="text-white font-bold text-xs">SSL</span>
+                        <span className="text-white font-bold text-xs">
+                          SSL
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-600">Secure Connection</span>
+                      <span className="text-xs text-gray-600">
+                        Secure Connection
+                      </span>
                     </div>
                     <div className="text-center">
                       <div className="w-12 h-8 bg-[#E65F25] rounded flex items-center justify-center mx-auto mb-2">
-                        <span className="text-white font-bold text-xs">PCI</span>
+                        <span className="text-white font-bold text-xs">
+                          PCI
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-600">PCI Compliant</span>
+                      <span className="text-xs text-gray-600">
+                        PCI Compliant
+                      </span>
                     </div>
                     <div className="text-center">
                       <div className="w-12 h-8 bg-purple-500 rounded flex items-center justify-center mx-auto mb-2">
-                        <span className="text-white font-bold text-xs">256</span>
+                        <span className="text-white font-bold text-xs">
+                          256
+                        </span>
                       </div>
                       <span className="text-xs text-gray-600">Encrypted</span>
                     </div>
                     <div className="text-center">
                       <div className="w-12 h-8 bg-blue-500 rounded flex items-center justify-center mx-auto mb-2">
-                        <span className="text-white font-bold text-xs">RBI</span>
+                        <span className="text-white font-bold text-xs">
+                          RBI
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-600">RBI Approved</span>
+                      <span className="text-xs text-gray-600">
+                        RBI Approved
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -580,8 +661,8 @@ const PaymentPage = () => {
                   disabled={isProcessing}
                   className={`w-full py-4 px-6 rounded-xl font-black text-lg transition-all duration-300 ${
                     isProcessing
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-[#E65F25] to-orange-500 hover:from-[#d4551f] hover:to-orange-600 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-[#E65F25] to-orange-500 hover:from-[#d4551f] hover:to-orange-600 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   } text-white`}
                 >
                   {isProcessing ? (
@@ -595,7 +676,8 @@ const PaymentPage = () => {
                 </button>
 
                 <p className="text-center text-sm text-gray-500">
-                  By completing this purchase, you agree to our Terms of Service and Privacy Policy
+                  By completing this purchase, you agree to our Terms of Service
+                  and Privacy Policy
                 </p>
               </form>
             </div>

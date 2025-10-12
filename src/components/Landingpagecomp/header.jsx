@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { User, Menu, X } from "lucide-react"; // 👤 type icon
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,36 +19,36 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-8 font-inter font-medium text-black">
-          <a
-            href="#trips"
+          <Link
+            to="/"
             className="hover:text-[#E65F25] cursor-pointer transition-colors duration-200"
           >
             Upcoming Trips
-          </a>
-          <a
-            href="#about"
+          </Link>
+          <Link
+            to="/about"
             className="hover:text-[#E65F25] cursor-pointer transition-colors duration-200"
           >
             About
-          </a>
-          <a
-            href="#blogs"
+          </Link>
+          <Link
+            to="/blogs"
             className="hover:text-[#E65F25] cursor-pointer transition-colors duration-200"
           >
             Blogs
-          </a>
-          <a
-            href="#gallery"
+          </Link>
+          <Link
+            to="/gallery"
             className="hover:text-[#E65F25] cursor-pointer transition-colors duration-200"
           >
             Gallery
-          </a>
-          <a
-            href="#payments"
+          </Link>
+          <Link
+            to="/payment"
             className="hover:text-[#E65F25] cursor-pointer transition-colors duration-200"
           >
             Payments
-          </a>
+          </Link>
 
           {/* Login Icon */}
           <User className="w-6 h-6 text-[#E65F25] cursor-pointer hover:scale-110 transition-transform duration-200" />
@@ -76,41 +77,41 @@ export default function Header() {
         <div className="fixed inset-0 z-40 lg:hidden pt-20 bg-white">
           <div className="flex flex-col items-center space-y-8 py-8 px-6">
             {/* Mobile Navigation Links */}
-            <a
-              href="#trips"
+            <Link
+              to="/trips"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Upcoming Trips
-            </a>
-            <a
-              href="#about"
+            </Link>
+            <Link
+              to="/about"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               About
-            </a>
-            <a
-              href="#blogs"
+            </Link>
+            <Link
+              to="/blogs"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Blogs
-            </a>
-            <a
-              href="#gallery"
+            </Link>
+            <Link
+              to="/gallery"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Gallery
-            </a>
-            <a
-              href="#payments"
+            </Link>
+            <Link
+              to="/payment"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Payments
-            </a>
+            </Link>
 
             {/* Mobile Login & CTA */}
             <div className="flex flex-col space-y-4 w-full max-w-xs mt-4">
