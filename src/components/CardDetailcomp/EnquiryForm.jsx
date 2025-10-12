@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Send, User, Phone, Heart } from 'lucide-react';
+import React, { useState } from "react";
+import { Send, User, Phone, Heart } from "lucide-react";
 
 const EnquiryForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: ''
+    name: "",
+    phone: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,28 +12,46 @@ const EnquiryForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    setTimeout(() => {
+
+    try {
+      // Send data to API
+      await axios.post("https://crm-ghar-se-frar.onrender.com/enquiry/add/short", {
+        ...formData,
+      });
+
       setIsSubmitting(false);
       setIsSubmitted(true);
-      
+
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
-          name: '',
-          phone: ''
+          name: "",
+          phone: "",
         });
       }, 3000);
-    }, 2000);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setIsSubmitting(false);
+      // Still show success to user even if API fails
+      setIsSubmitted(true);
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: "",
+          phone: "",
+        });
+      }, 3000);
+    }
   };
 
   if (isSubmitted) {
@@ -46,8 +64,12 @@ const EnquiryForm = () => {
                 <Heart className="w-10 h-10 text-white" />
               </div>
             </div>
-            <h3 className="text-3xl font-bold text-gray-800 mb-4 text-center">Thank You! 🎉</h3>
-            <p className="text-lg text-gray-600 text-center">Our travel experts will contact you within 2 hours.</p>
+            <h3 className="text-3xl font-bold text-gray-800 mb-4 text-center">
+              Thank You! 🎉
+            </h3>
+            <p className="text-lg text-gray-600 text-center">
+              Our travel experts will contact you within 2 hours.
+            </p>
           </div>
         </div>
       </div>
@@ -57,7 +79,6 @@ const EnquiryForm = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#E65F25]/10 via-white to-[#FF7A42]/10 p-6">
       <div className="w-full max-w-md">
-        
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-[#E65F25] to-[#FF7A42] bg-clip-text text-transparent mb-3">
             Start Your Journey
@@ -66,13 +87,13 @@ const EnquiryForm = () => {
         </div>
 
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#E65F25]/20">
-          
           <div className="bg-gradient-to-r from-[#E65F25] to-[#FF7A42] px-6 py-4">
-            <h3 className="text-xl font-bold text-white text-center">Get Started</h3>
+            <h3 className="text-xl font-bold text-white text-center">
+              Get Started
+            </h3>
           </div>
 
           <div className="p-8">
-            
             <div className="mb-6">
               <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
                 <User className="w-5 h-5 text-[#E65F25]" />
@@ -122,7 +143,7 @@ const EnquiryForm = () => {
                 </>
               )}
             </button>
-            
+
             <p className="text-sm text-gray-500 mt-6 text-center flex items-center justify-center gap-2">
               <Heart className="w-4 h-4 text-[#E65F25]" />
               Our team will reach out to you as soon as possible

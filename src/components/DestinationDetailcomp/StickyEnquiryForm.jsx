@@ -140,26 +140,11 @@ export default function StickyEnquiryForm({
               isMobile ? "mb-1" : "mb-2"
             }`}
           >
-            <span
-              className={`font-bold text-gray-900 ${
-                isMobile ? "text-lg" : "text-xl"
-              }`}
-            >
-              {config.currentPrice}
-            </span>
-            <span
-              className={`text-gray-400 line-through ${
-                isMobile ? "text-sm" : "text-base"
-              }`}
-            >
-              {config.originalPrice}
-            </span>
+            
+            
           </div>
 
-          {/* Savings Badge - Responsive */}
-          <div className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
-            SAVE INR {config.savings}
-          </div>
+         
         </div>
 
         {/* Form - Responsive Spacing */}
@@ -195,13 +180,13 @@ export default function StickyEnquiryForm({
 
           {/* Phone Number - Responsive */}
           <div className="flex space-x-2">
-            <select className="p-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E65F25] focus:border-[#E65F25] bg-white transition-all duration-200 min-w-[80px]">
+            {/* <select className="p-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E65F25] focus:border-[#E65F25] bg-white transition-all duration-200 min-w-[80px]">
               <option>{config.countryCode}</option>
               <option>+1</option>
               <option>+44</option>
               <option>+61</option>
               <option>+65</option>
-            </select>
+            </select> */}
             <input
               type="tel"
               name="phone"
