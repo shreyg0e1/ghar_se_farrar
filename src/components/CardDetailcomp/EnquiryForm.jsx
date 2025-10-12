@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Send, User, Phone, Heart } from "lucide-react";
+import axios from "axios";
 
 const EnquiryForm = () => {
   const [formData, setFormData] = useState({
@@ -95,7 +96,7 @@ const EnquiryForm = () => {
 
           <div className="p-8">
             <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
+              <label className=" text-gray-700 font-semibold mb-2 flex items-center gap-2">
                 <User className="w-5 h-5 text-[#E65F25]" />
                 Your Name *
               </label>
@@ -111,7 +112,7 @@ const EnquiryForm = () => {
             </div>
 
             <div className="mb-8">
-              <label className="block text-gray-700 font-semibold mb-2 flex items-center gap-2">
+              <label className=" text-gray-700 font-semibold mb-2 flex items-center gap-2">
                 <Phone className="w-5 h-5 text-[#E65F25]" />
                 Phone Number *
               </label>
