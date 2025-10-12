@@ -132,13 +132,7 @@ export default function StickyEnquiryForm({
 
         {/* Header - Responsive */}
         <div className={`${isMobile ? "mb-3" : "mb-4"}`}>
-          <h3
-            className={`font-bold text-gray-900 ${
-              isMobile ? "text-base" : "text-lg"
-            }`}
-          >
-            {config.title}
-          </h3>
+          
 
           {/* Price Section - Responsive */}
           <div
@@ -371,7 +365,7 @@ export default function StickyEnquiryForm({
                 Enquiry Submitted!
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Thank you for your interest in {config.title}! Our travel
+                Thank you for your interest! Our travel
                 experts will contact you within 24 hours to discuss your perfect
                 trip. ✨
               </p>
