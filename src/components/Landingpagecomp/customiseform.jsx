@@ -366,6 +366,7 @@
 
 
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Calendar,
   MapPin,
@@ -376,6 +377,8 @@ import {
   Clock,
   Navigation,
   Sparkles,
+  X,
+  CheckCircle,
 } from "lucide-react";
 
 export default function CustomiseTripForm() {
@@ -392,6 +395,8 @@ export default function CustomiseTripForm() {
   });
 
   const [focusedField, setFocusedField] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -401,10 +406,75 @@ export default function CustomiseTripForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Thank you! We will contact you within 24 hours. ✨");
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      console.log("Form submitted:", formData);
+
+      // Prepare the data for API submission
+      const submissionData = {
+        name: formData.fullName,
+        desination: formData.destination,
+        departureDate: formData.startDate,
+        returnDate: formData.endDate,
+        durationType: formData.duration,
+        travelGroup: formData.groupSize,
+        startingCity: formData.startingPoint,
+        contactNumber: formData.phone,
+        email: formData.email,
+        submittedAt: new Date().toISOString(),
+      };
+
+      // Send data to API
+      const response = await axios.post(
+        "https://crm-ghar-se-frar.onrender.com/dream/add",
+        {...submissionData},
+       
+      );
+
+      console.log("API Response:", response.data);
+
+      // Show success modal
+      setShowSuccessModal(true);
+
+      // Reset form after successful submission
+      setFormData({
+        fullName: "",
+        destination: "",
+        startDate: "",
+        endDate: "",
+        duration: "",
+        groupSize: "",
+        startingPoint: "",
+        phone: "",
+        email: "",
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      let errorMessage = "An error occurred. Please try again.";
+
+      if (error.response) {
+        errorMessage =
+          error.response.data.message || "Submission failed. Please try again.";
+      } else if (error.request) {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (error.code === "ECONNABORTED") {
+        errorMessage = "Request timeout. Please try again.";
+      }
+
+      alert(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
   };
 
   return (
@@ -455,297 +525,332 @@ export default function CustomiseTripForm() {
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-400/20 via-transparent to-orange-400/20 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
           <div className="relative z-10 p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Full Name */}
-              <div className="md:col-span-2 group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <User size={14} className="text-orange-300" />
-                  Full Name
-                </label>
-                <div className="relative">
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Full Name */}
+                <div className="md:col-span-2 group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <User size={14} className="text-orange-300" />
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      onFocus={() => setFocusedField("fullName")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Enter your full name"
+                      className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
+                      style={{
+                        boxShadow:
+                          focusedField === "fullName"
+                            ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                            : "none",
+                      }}
+                      required
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                  </div>
+                </div>
+
+                {/* Destination */}
+                <div className="md:col-span-2 group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <MapPin size={14} className="text-orange-300" />
+                    Destination / Region
+                  </label>
+                  <select
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("destination")}
+                    onBlur={() => setFocusedField(null)}
+                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
+                    style={{
+                      boxShadow:
+                        focusedField === "destination"
+                          ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                          : "none",
+                    }}
+                    required
+                  >
+                    <option value="" className="bg-slate-900 text-white">
+                      Select your dream destination
+                    </option>
+                    <option value="spiti" className="bg-slate-900 text-white">
+                      🏔 Spiti Valley
+                    </option>
+                    <option value="japan" className="bg-slate-900 text-white">
+                      🎌 Japan
+                    </option>
+                    <option
+                      value="thailand"
+                      className="bg-slate-900 text-white"
+                    >
+                      🏝 Thailand
+                    </option>
+                    <option value="bali" className="bg-slate-900 text-white">
+                      🌺 Bali
+                    </option>
+                    <option value="europe" className="bg-slate-900 text-white">
+                      🏰 Europe
+                    </option>
+                  </select>
+                </div>
+
+                {/* Aesthetic Date Inputs */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Calendar size={14} className="text-orange-300" />
+                    Departure Date
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleInputChange}
+                      onFocus={() => setFocusedField("startDate")}
+                      onBlur={() => setFocusedField(null)}
+                      className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
+                      style={{
+                        boxShadow:
+                          focusedField === "startDate"
+                            ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                            : "none",
+                        colorScheme: "dark",
+                      }}
+                      required
+                    />
+                    <Calendar
+                      size={16}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-300/70 pointer-events-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Calendar size={14} className="text-orange-300" />
+                    Return Date
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={formData.endDate}
+                      onChange={handleInputChange}
+                      onFocus={() => setFocusedField("endDate")}
+                      onBlur={() => setFocusedField(null)}
+                      className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
+                      style={{
+                        boxShadow:
+                          focusedField === "endDate"
+                            ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                            : "none",
+                        colorScheme: "dark",
+                      }}
+                      required
+                    />
+                    <Calendar
+                      size={16}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-300/70 pointer-events-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Duration */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Clock size={14} className="text-orange-300" />
+                    Duration Type
+                  </label>
+                  <select
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("duration")}
+                    onBlur={() => setFocusedField(null)}
+                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
+                    style={{
+                      boxShadow:
+                        focusedField === "duration"
+                          ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                          : "none",
+                    }}
+                    required
+                  >
+                    <option value="" className="bg-slate-900 text-white">
+                      Choose flexibility
+                    </option>
+                    <option value="fixed" className="bg-slate-900 text-white">
+                      📅 Fixed Duration
+                    </option>
+                    <option
+                      value="flexible"
+                      className="bg-slate-900 text-white"
+                    >
+                      🔄 Flexible Duration
+                    </option>
+                  </select>
+                </div>
+
+                {/* Group Size */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Users size={14} className="text-orange-300" />
+                    Travel Group
+                  </label>
+                  <select
+                    name="groupSize"
+                    value={formData.groupSize}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("groupSize")}
+                    onBlur={() => setFocusedField(null)}
+                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
+                    style={{
+                      boxShadow:
+                        focusedField === "groupSize"
+                          ? "0 0 15px rgba(230, 95, 37, 0.3)"
+                          : "none",
+                    }}
+                    required
+                  >
+                    <option value="" className="bg-slate-900 text-white">
+                      Select travel companions
+                    </option>
+                    <option value="solo" className="bg-slate-900 text-white">
+                      🧳 Solo Adventure
+                    </option>
+                    <option value="couple" className="bg-slate-900 text-white">
+                      💑 Romantic Getaway
+                    </option>
+                    <option value="family" className="bg-slate-900 text-white">
+                      👨‍👩‍👧‍👦 Family Trip
+                    </option>
+                    <option value="group" className="bg-slate-900 text-white">
+                      👥 Group Expedition
+                    </option>
+                  </select>
+                </div>
+
+                {/* Starting Point */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Navigation size={14} className="text-orange-300" />
+                    Starting City
+                  </label>
                   <input
                     type="text"
-                    name="fullName"
-                    value={formData.fullName}
+                    name="startingPoint"
+                    value={formData.startingPoint}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField("fullName")}
+                    onFocus={() => setFocusedField("startingPoint")}
                     onBlur={() => setFocusedField(null)}
-                    placeholder="Enter your full name"
+                    placeholder="Which city will you depart from?"
                     className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
                     style={{
                       boxShadow:
-                        focusedField === "fullName"
+                        focusedField === "startingPoint"
                           ? "0 0 15px rgba(230, 95, 37, 0.3)"
                           : "none",
                     }}
+                    required
                   />
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                 </div>
-              </div>
 
-              {/* Destination */}
-              <div className="md:col-span-2 group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <MapPin size={14} className="text-orange-300" />
-                  Destination / Region
-                </label>
-                <select
-                  name="destination"
-                  value={formData.destination}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("destination")}
-                  onBlur={() => setFocusedField(null)}
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
-                  style={{
-                    boxShadow:
-                      focusedField === "destination"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                >
-                  <option value="" className="bg-slate-900 text-white">
-                    Select your dream destination
-                  </option>
-                  <option value="spiti" className="bg-slate-900 text-white">
-                    🏔 Spiti Valley
-                  </option>
-                  <option value="japan" className="bg-slate-900 text-white">
-                    🎌 Japan
-                  </option>
-                  <option value="thailand" className="bg-slate-900 text-white">
-                    🏝 Thailand
-                  </option>
-                  <option value="bali" className="bg-slate-900 text-white">
-                    🌺 Bali
-                  </option>
-                  <option value="europe" className="bg-slate-900 text-white">
-                    🏰 Europe
-                  </option>
-                </select>
-              </div>
-
-              {/* Aesthetic Date Inputs */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Calendar size={14} className="text-orange-300" />
-                  Departure Date
-                </label>
-                <div className="relative">
+                {/* Phone Number */}
+                <div className="group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Phone size={14} className="text-orange-300" />
+                    Contact Number
+                  </label>
                   <input
-                    type="date"
-                    name="startDate"
-                    value={formData.startDate}
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField("startDate")}
+                    onFocus={() => setFocusedField("phone")}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
+                    placeholder="+91 12345 67890"
+                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
                     style={{
                       boxShadow:
-                        focusedField === "startDate"
+                        focusedField === "phone"
                           ? "0 0 15px rgba(230, 95, 37, 0.3)"
                           : "none",
-                      colorScheme: "dark",
                     }}
-                  />
-                  <Calendar
-                    size={16}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-300/70 pointer-events-none"
+                    required
                   />
                 </div>
-              </div>
 
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Calendar size={14} className="text-orange-300" />
-                  Return Date
-                </label>
-                <div className="relative">
+                {/* Email */}
+                <div className="md:col-span-2 group">
+                  <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
+                    <Mail size={14} className="text-orange-300" />
+                    Email Address
+                  </label>
                   <input
-                    type="date"
-                    name="endDate"
-                    value={formData.endDate}
+                    type="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField("endDate")}
+                    onFocus={() => setFocusedField("email")}
                     onBlur={() => setFocusedField(null)}
-                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
+                    placeholder="your.email@example.com"
+                    className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
                     style={{
                       boxShadow:
-                        focusedField === "endDate"
+                        focusedField === "email"
                           ? "0 0 15px rgba(230, 95, 37, 0.3)"
                           : "none",
-                      colorScheme: "dark",
                     }}
-                  />
-                  <Calendar
-                    size={16}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-300/70 pointer-events-none"
+                    required
                   />
                 </div>
+
+                {/* Premium Submit Button */}
+                <div className="md:col-span-2 mt-6">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`group relative w-full py-3 rounded-xl font-bold text-lg text-white overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-xl shadow-lg transform cursor-pointer ${
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    style={{ backgroundColor: "#E65F25" }}
+                  >
+                    <div className="relative flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span className="tracking-wide">Submitting...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={18} className="animate-pulse" />
+                          <span className="tracking-wide">
+                            Request Callback
+                          </span>
+                          <Sparkles size={18} className="animate-pulse" />
+                        </>
+                      )}
+                    </div>
+
+                    {/* Premium shimmer effect */}
+                    {!isSubmitting && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+                    )}
+
+                    {/* Glow effect */}
+                    {!isSubmitting && (
+                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-400/0 via-orange-300/30 to-orange-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"></div>
+                    )}
+                  </button>
+                </div>
               </div>
-
-              {/* Duration */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Clock size={14} className="text-orange-300" />
-                  Duration Type
-                </label>
-                <select
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("duration")}
-                  onBlur={() => setFocusedField(null)}
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
-                  style={{
-                    boxShadow:
-                      focusedField === "duration"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                >
-                  <option value="" className="bg-slate-900 text-white">
-                    Choose flexibility
-                  </option>
-                  <option value="fixed" className="bg-slate-900 text-white">
-                    📅 Fixed Duration
-                  </option>
-                  <option value="flexible" className="bg-slate-900 text-white">
-                    🔄 Flexible Duration
-                  </option>
-                </select>
-              </div>
-
-              {/* Group Size */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Users size={14} className="text-orange-300" />
-                  Travel Group
-                </label>
-                <select
-                  name="groupSize"
-                  value={formData.groupSize}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("groupSize")}
-                  onBlur={() => setFocusedField(null)}
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base appearance-none cursor-pointer"
-                  style={{
-                    boxShadow:
-                      focusedField === "groupSize"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                >
-                  <option value="" className="bg-slate-900 text-white">
-                    Select travel companions
-                  </option>
-                  <option value="solo" className="bg-slate-900 text-white">
-                    🧳 Solo Adventure
-                  </option>
-                  <option value="couple" className="bg-slate-900 text-white">
-                    💑 Romantic Getaway
-                  </option>
-                  <option value="family" className="bg-slate-900 text-white">
-                    👨‍👩‍👧‍👦 Family Trip
-                  </option>
-                  <option value="group" className="bg-slate-900 text-white">
-                    👥 Group Expedition
-                  </option>
-                </select>
-              </div>
-
-              {/* Starting Point */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Navigation size={14} className="text-orange-300" />
-                  Starting City
-                </label>
-                <input
-                  type="text"
-                  name="startingPoint"
-                  value={formData.startingPoint}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("startingPoint")}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="Which city will you depart from?"
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
-                  style={{
-                    boxShadow:
-                      focusedField === "startingPoint"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                />
-              </div>
-
-              {/* Phone Number */}
-              <div className="group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Phone size={14} className="text-orange-300" />
-                  Contact Number
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("phone")}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="+91 12345 67890"
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
-                  style={{
-                    boxShadow:
-                      focusedField === "phone"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                />
-              </div>
-
-              {/* Email */}
-              <div className="md:col-span-2 group">
-                <label className="flex items-center gap-2 text-white/90 mb-2 font-semibold text-xs tracking-wider uppercase">
-                  <Mail size={14} className="text-orange-300" />
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField("email")}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="your.email@example.com"
-                  className="w-full rounded-xl px-4 py-3 bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 hover:bg-white/15 text-base"
-                  style={{
-                    boxShadow:
-                      focusedField === "email"
-                        ? "0 0 15px rgba(230, 95, 37, 0.3)"
-                        : "none",
-                  }}
-                />
-              </div>
-
-              {/* Premium Submit Button */}
-              <div className="md:col-span-2 mt-6">
-                <button
-                  onClick={handleSubmit}
-                  className="group relative w-full py-3 rounded-xl font-bold text-lg text-white overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-xl shadow-lg transform cursor-pointer"
-                  style={{ backgroundColor: "#E65F25" }}
-                >
-                  <div className="relative flex items-center justify-center gap-2">
-                    <Sparkles size={18} className="animate-pulse" />
-                    <span className="tracking-wide">Request Callback</span>
-                    <Sparkles size={18} className="animate-pulse" />
-                  </div>
-
-                  {/* Premium shimmer effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
-
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-orange-400/0 via-orange-300/30 to-orange-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"></div>
-                </button>
-              </div>
-            </div>
+            </form>
           </div>
 
           {/* Bottom decoration */}
@@ -760,6 +865,83 @@ export default function CustomiseTripForm() {
           </p>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={closeSuccessModal}
+          ></div>
+
+          {/* Modal Content */}
+          <div className="relative bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl transform animate-scale-in">
+            {/* Close Button */}
+            <button
+              onClick={closeSuccessModal}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {/* Success Icon */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                Request Submitted!
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Thank you for sharing your dream trip details! Our travel
+                experts will contact you within 24 hours to craft your perfect
+                escape. ✨
+              </p>
+            </div>
+
+            {/* Next Steps */}
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl p-4 mb-6 border border-orange-200">
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-orange-500" />
+                What's Next?
+              </h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Personalized itinerary within 24 hours</li>
+                <li>• Expert travel consultation call</li>
+                <li>• Customized pricing & package options</li>
+              </ul>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={closeSuccessModal}
+                className="flex-1 bg-gradient-to-r from-[#E65F25] to-[#FF7A42] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+              >
+                Continue Browsing
+              </button>
+            </div>
+
+            {/* Contact Info */}
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500">
+                Need immediate assistance?{" "}
+                <a
+                  href="tel:+919876543210"
+                  className="text-[#E65F25] font-semibold hover:underline"
+                >
+                  Call +91 98765 43210
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Custom CSS for date picker styling */}
       <style jsx>{`
@@ -780,6 +962,21 @@ export default function CustomiseTripForm() {
           background-repeat: no-repeat;
           background-size: 1em 1em;
           padding-right: 2.5rem;
+        }
+
+        @keyframes scale-in {
+          from {
+            transform: scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
         }
       `}</style>
     </div>
