@@ -103,6 +103,7 @@ function App() {
         />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/gallery" element={<GalleryMasonryGrid />} />
       </Routes>
       <PricelessFooter />
     </BrowserRouter>

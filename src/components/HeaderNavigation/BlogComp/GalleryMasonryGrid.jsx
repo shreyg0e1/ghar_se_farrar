@@ -81,7 +81,7 @@ const GalleryMasonryGrid = ({
 
   return (
     <div 
-      className="w-full min-h-screen py-12 px-4"
+      className="w-full min-h-screen py-12 px-4 mt-10"
       style={{
         background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(245, 237, 224, 0.4))',
         fontFamily: "'Crimson Text', serif"
