@@ -55,8 +55,6 @@ export default function StickyEnquiryForm({
         date: formData.travelDate,
         traveller: parseInt(formData.travellerCount) || 1,
         message: formData.message,
-        packageName: config.title,
-        packagePrice: config.currentPrice,
         submittedAt: new Date().toISOString(),
       };
 
