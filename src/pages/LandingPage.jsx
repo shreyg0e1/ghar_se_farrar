@@ -83,7 +83,7 @@ function LandingPage({
           <Customiseform />
           <BuzzSection />
           <ContactUs />
-          <Footer />
+         
         </div>
       </div>
     </div>
