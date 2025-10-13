@@ -1,51 +1,59 @@
-// import React from "react";
-// import video from "../assets/bg-video.mp4"
+//========================================================
+// Before RESPONSIVE:- Before using
+//========================================================
 
+// import React from "react";
+// import { motion } from "framer-motion";
+// import video from "../../assets/bg-video.mp4";
 // export default function FullScreenVideo() {
 //   return (
-//     <div className="relative w-full h-screen overflow-hidden">
+//     <div className="relative w-full h-screen overflow-hidden mt-[64px]">
 //       {/* Background video */}
 //       <video
 //         className="absolute top-0 left-0 w-full h-full object-cover"
-//         src={video} // replace with your video link
+//         src={video}
 //         autoPlay
 //         muted
 //         loop
 //         playsInline
 //       />
 
-//       {/* Overlay (optional for better text contrast) */}
-//       <div className="absolute inset-0 bg-black/30"></div>
+//       {/* Overlay for clarity */}
+//       <div className="absolute inset-0 bg-black/50"></div>
 
-//       {/* Centered content over video */}
-//        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
-//         <h1 className="text-4xl md:text-6xl font-bold mb-4">
-//           Welcome to Faraar
-//         </h1>
-//         <p className="text-lg md:text-2xl max-w-2xl">
+//       {/* Centered animated content */}
+//       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+//         {/* Heading */}
+//         <motion.h1
+//           className="text-4xl md:text-7xl font-extrabold mb-6
+//                      bg-clip-text text-transparent
+//                      bg-gradient-to-r from-[#ffffff] via-[#E65F25] to-[#ffffff]
+//                      drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)]"
+//           initial={{ opacity: 0, scale: 0.9 }}
+//           animate={{ opacity: 1, scale: 1 }}
+//           transition={{ duration: 1, ease: "easeOut" }}
+//         >
+//           Ready to <span className="text-[#E65F25]">Escape</span>
+//         </motion.h1>
+
+//         {/* Subtitle */}
+//         <motion.p
+//           className="text-lg md:text-2xl max-w-2xl text-gray-200 font-medium
+//                      drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+//           initial={{ opacity: 0, y: 30 }}
+//           animate={{ opacity: 1, y: 0 }}
+//           transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
+//         >
 //           Discover journeys that connect you with your soul
-//         </p>
-//       </div> 
+//         </motion.p>
+//       </div>
 //     </div>
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//======================================================
+//AFTER RESPONSIVE:- Currently Using Code
+//=======================================================
 
 import React from "react";
 import { motion } from "framer-motion";
@@ -53,7 +61,7 @@ import video from "../../assets/bg-video.mp4";
 
 export default function FullScreenVideo() {
   return (
-    <div className="relative w-full h-screen overflow-hidden mt-[64px]">
+    <div className="relative w-full h-screen overflow-hidden mt-[52px] md:mt-[56px] lg:mt-[64px]">
       {/* Background video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
@@ -68,30 +76,24 @@ export default function FullScreenVideo() {
       <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Centered animated content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-6">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 md:px-5 lg:px-6">
         {/* Heading */}
         <motion.h1
-          className="text-3xl xs:text-4xl md:text-7xl font-extrabold mb-4 md:mb-6
+          className="text-3xl md:text-5xl lg:text-7xl font-extrabold mb-4 md:mb-5 lg:mb-6 
                      bg-clip-text text-transparent 
                      bg-gradient-to-r from-[#ffffff] via-[#E65F25] to-[#ffffff]
-                     drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)]
-                     leading-tight md:leading-normal"
+                     drop-shadow-[0_4px_12px_rgba(0,0,0,0.7)]"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          Ready to{" "}
-          <span className="text-[#E65F25] block xs:inline-block mt-1 xs:mt-0">
-            Escape
-          </span>
+          Ready to <span className="text-[#E65F25]">Escape</span>
         </motion.h1>
 
         {/* Subtitle */}
         <motion.p
-          className="text-base xs:text-lg md:text-2xl max-w-xs xs:max-w-sm md:max-w-2xl 
-                     text-gray-200 font-medium 
-                     drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]
-                     leading-relaxed px-2 xs:px-0"
+          className="text-sm md:text-lg lg:text-2xl max-w-sm md:max-w-xl lg:max-w-2xl text-gray-200 font-medium 
+                     drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mb-6 md:mb-8 lg:mb-0"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 1, ease: "easeOut" }}
@@ -99,77 +101,19 @@ export default function FullScreenVideo() {
           Discover journeys that connect you with your soul
         </motion.p>
 
-        {/* Optional CTA Button for Mobile - Only if you want to add one */}
-        <motion.div
-          className="mt-6 md:mt-8"
-          initial={{ opacity: 0, y: 40 }}
+        {/* CTA Button - Only visible on Mobile */}
+        <motion.button
+          className="md:hidden bg-[#E65F25] text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:opacity-90 cursor-pointer transition-all duration-300 text-sm"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
         >
-          <button
-            className="bg-[#E65F25] text-white px-6 py-3 md:px-8 md:py-4 
-                           rounded-lg font-semibold text-sm md:text-base
-                           shadow-lg hover:opacity-90 cursor-pointer 
-                           transition-all duration-300 active:scale-95
-                           transform hover:scale-105"
-          >
-            Explore Trips
-          </button>
-        </motion.div>
+          Explore Now
+        </motion.button>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, { useRef, useEffect, useState } from "react";
 // import {
@@ -223,18 +167,18 @@ export default function FullScreenVideo() {
 
 //     const brandColor = new Color("#E65F25");
 //     const secondaryColor = new Color("#F4A261");
-    
+
 //     for (let i = 0; i < particleCount; i++) {
 //       // Spread particles in a larger area
 //       positions[i * 3] = (Math.random() - 0.5) * 20;
 //       positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
 //       positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-      
+
 //       // Random velocities for collapse animation
 //       velocities[i * 3] = (Math.random() - 0.5) * 0.1;
 //       velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.1;
 //       velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.1;
-      
+
 //       // Mix of brand colors
 //       const color = Math.random() > 0.5 ? brandColor : secondaryColor;
 //       colors[i * 3] = color.r;
@@ -259,7 +203,7 @@ export default function FullScreenVideo() {
 
 //     // 3D Suitcase
 //     const suitcaseGroup = new Group();
-    
+
 //     // Main body
 //     const bodyGeometry = new BoxGeometry(2, 1.5, 0.6);
 //     const bodyMaterial = new MeshBasicMaterial({
@@ -268,7 +212,7 @@ export default function FullScreenVideo() {
 //       opacity: 0,
 //     });
 //     const suitcaseBody = new Mesh(bodyGeometry, bodyMaterial);
-    
+
 //     // Handle
 //     const handleGeometry = new CylinderGeometry(0.05, 0.05, 1, 8);
 //     const handleMaterial = new MeshBasicMaterial({
@@ -279,7 +223,7 @@ export default function FullScreenVideo() {
 //     const handle = new Mesh(handleGeometry, handleMaterial);
 //     handle.rotation.z = Math.PI / 2;
 //     handle.position.y = 1.2;
-    
+
 //     // Wheels
 //     const wheelGeometry = new CylinderGeometry(0.2, 0.2, 0.1, 16);
 //     const wheelMaterial = new MeshBasicMaterial({
@@ -287,14 +231,14 @@ export default function FullScreenVideo() {
 //       transparent: true,
 //       opacity: 0,
 //     });
-    
+
 //     const wheel1 = new Mesh(wheelGeometry, wheelMaterial);
 //     const wheel2 = new Mesh(wheelGeometry, wheelMaterial);
 //     wheel1.position.set(-0.7, -0.9, 0.4);
 //     wheel2.position.set(0.7, -0.9, 0.4);
 //     wheel1.rotation.x = Math.PI / 2;
 //     wheel2.rotation.x = Math.PI / 2;
-    
+
 //     suitcaseGroup.add(suitcaseBody, handle, wheel1, wheel2);
 //     suitcaseGroup.position.set(0, -5, 0);
 //     suitcaseRef.current = suitcaseGroup;
@@ -302,7 +246,7 @@ export default function FullScreenVideo() {
 
 //     // 3D Airplane
 //     const airplaneGroup = new Group();
-    
+
 //     // Fuselage
 //     const fuselageGeometry = new CylinderGeometry(0.3, 0.1, 3, 12);
 //     const fuselageMaterial = new MeshBasicMaterial({
@@ -312,7 +256,7 @@ export default function FullScreenVideo() {
 //     });
 //     const fuselage = new Mesh(fuselageGeometry, fuselageMaterial);
 //     fuselage.rotation.z = Math.PI / 2;
-    
+
 //     // Wings
 //     const wingGeometry = new BoxGeometry(3, 0.1, 1);
 //     const wingMaterial = new MeshBasicMaterial({
@@ -321,7 +265,7 @@ export default function FullScreenVideo() {
 //       opacity: 0,
 //     });
 //     const wings = new Mesh(wingGeometry, wingMaterial);
-    
+
 //     // Tail
 //     const tailGeometry = new BoxGeometry(0.8, 0.05, 0.6);
 //     const tailMaterial = new MeshBasicMaterial({
@@ -332,7 +276,7 @@ export default function FullScreenVideo() {
 //     const tail = new Mesh(tailGeometry, tailMaterial);
 //     tail.position.x = -1.2;
 //     tail.position.y = 0.3;
-    
+
 //     airplaneGroup.add(fuselage, wings, tail);
 //     airplaneGroup.position.set(-15, 0, 0);
 //     airplaneRef.current = airplaneGroup;
@@ -341,17 +285,17 @@ export default function FullScreenVideo() {
 //     camera.position.set(0, 0, 10);
 
 //     let collapseProgress = 0;
-    
+
 //     const animate = () => {
 //       frameRef.current = requestAnimationFrame(animate);
 
 //       const time = Date.now() * 0.001;
-      
+
 //       // Particle animation
 //       if (animationPhase === 0) {
 //         particles.rotation.y += 0.002;
 //         particles.position.y = Math.sin(time * 0.5) * 0.3;
-        
+
 //         // Gentle floating motion for individual particles
 //         const positions = particles.geometry.attributes.position.array;
 //         for (let i = 0; i < positions.length; i += 3) {
@@ -367,8 +311,8 @@ export default function FullScreenVideo() {
 //         });
 //         suitcaseRef.current.position.y += 0.08;
 //         suitcaseRef.current.rotation.y += 0.02;
-//       } 
-      
+//       }
+
 //       if (animationPhase === 2) {
 //         // Airplane appears and particles start collapsing
 //         airplaneRef.current.children.forEach(child => {
@@ -377,28 +321,28 @@ export default function FullScreenVideo() {
 //         airplaneRef.current.position.x += 0.15;
 //         airplaneRef.current.position.y += 0.03;
 //         airplaneRef.current.rotation.z += 0.01;
-        
+
 //         suitcaseRef.current.children.forEach(child => {
 //           child.material.opacity = Math.max(child.material.opacity - 0.03, 0);
 //         });
-        
+
 //         // Particle collapse animation
 //         collapseProgress += 0.02;
 //         const positions = particles.geometry.attributes.position.array;
 //         const { velocities } = particlesRef.current;
-        
+
 //         for (let i = 0; i < positions.length; i += 3) {
 //           const targetX = airplaneRef.current.position.x;
 //           const targetY = airplaneRef.current.position.y;
 //           const targetZ = 0;
-          
+
 //           // Move particles towards airplane position
 //           positions[i] += (targetX - positions[i]) * 0.02;
 //           positions[i + 1] += (targetY - positions[i + 1]) * 0.02;
 //           positions[i + 2] += (targetZ - positions[i + 2]) * 0.02;
 //         }
 //         particles.geometry.attributes.position.needsUpdate = true;
-        
+
 //         // Scale airplane as particles merge
 //         const scale = 1 + collapseProgress * 2;
 //         airplaneRef.current.scale.set(scale, scale, scale);
@@ -503,7 +447,7 @@ export default function FullScreenVideo() {
 //                 boxShadow: "0 10px 30px rgba(230, 95, 37, 0.3)",
 //               }}
 //             >
-//               Start Journey 
+//               Start Journey
 //             </button>
 //           </div>
 //         )}
@@ -511,7 +455,7 @@ export default function FullScreenVideo() {
 //         {animationPhase === 1 && (
 //           <div className="animate-pulse">
 //             <h2 className="text-4xl md:text-6xl font-medium text-[#E65F25] drop-shadow-lg">
-//               Packing your dreams... 
+//               Packing your dreams...
 //             </h2>
 //           </div>
 //         )}
@@ -519,7 +463,7 @@ export default function FullScreenVideo() {
 //         {animationPhase === 2 && (
 //           <div className="animate-bounce">
 //             <h2 className="text-4xl md:text-6xl font-medium text-[#E65F25] drop-shadow-lg">
-//               Taking off... 
+//               Taking off...
 //             </h2>
 //           </div>
 //         )}

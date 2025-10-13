@@ -78,7 +78,7 @@ export default function Header() {
           <div className="flex flex-col items-center space-y-8 py-8 px-6">
             {/* Mobile Navigation Links */}
             <Link
-              to="/trips"
+              to="/"
               className="w-full text-center text-lg font-medium text-gray-800 hover:text-[#E65F25] py-3 border-b border-gray-100 cursor-pointer transition-all duration-200 active:bg-gray-50 rounded-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >

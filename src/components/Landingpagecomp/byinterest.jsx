@@ -62,21 +62,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import React from "react";
 // import { motion } from "framer-motion";
 
@@ -133,7 +118,7 @@
 //               <img
 //                 src={item.image}
 //                 alt={item.title}
-//                 className="w-32 h-32 object-cover rounded-full shadow-lg 
+//                 className="w-32 h-32 object-cover rounded-full shadow-lg
 //                 group-hover:brightness-110 transition duration-500"
 //               />
 //             </div>
@@ -147,7 +132,121 @@
 //   );
 // }
 
+//========================================================
+// Before RESPONSIVE:- Before using
+//========================================================
 
+// import React from "react";
+// import { motion } from "framer-motion";
+
+// // make it integratable with backend data
+// const interests = [
+//   { title: "Xmas New Year", image: "/gallery/xamsnewywer.jpeg" },
+//   { title: "Night Life", image: "/gallery/nightlife.jpeg" },
+//   { title: "Snorkeling", image: "/gallery/snorkeling.jpeg" },
+//   { title: "Sightseeing", image: "/gallery/sightseeing.jpeg" },
+//   { title: "Beach", image: "/gallery/beach.jpeg" },
+//   { title: "Shopping", image: "/gallery/shopping.jpeg" },
+//   { title: "Swimming", image: "/gallery/swimming.jpeg" },
+//   { title: "Adventure", image: "/gallery/adventure.jpeg" },
+//   { title: "Wildlife", image: "/gallery/wildlife.jpeg" },
+//   { title: "Festivals", image: "/gallery/festivals.jpeg" },
+// ];
+
+// const loopedInterests = [...interests, ...interests];
+
+// export default function PlanByInterest() {
+//   return (
+//     <div className="text-center py-16 bg-white relative">
+//       {/* Heading */}
+//       <motion.h1
+//         initial={{ opacity: 0, y: -30 }}
+//         whileInView={{ opacity: 1, y: 0 }}
+//         transition={{ duration: 0.8 }}
+//         viewport={{ once: true }}
+//         className="text-4xl md:text-5xl font-extrabold"
+//       >
+//         Plan by{" "}
+//         <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+//           Interest
+//         </span>
+//       </motion.h1>
+
+//       <p className="text-lg text-gray-600 mt-3">
+//         Straight from the ones who made it epic.
+//       </p>
+
+//       {/* Smooth Auto Sliding Row - Fixed Container */}
+//       <div className="mt-14 relative">
+//         {/* Mask for horizontal overflow only */}
+//         <div className="overflow-hidden mask-gradient">
+//           <div className="py-8 px-4"> {/* Added padding for hover space */}
+//             <motion.div
+//               className="flex gap-14 items-center" // items-center added for alignment
+//               animate={{ x: ["0%", "-100%"], rotateY: [2, -2, 2] }}
+//               transition={{
+//                 repeat: Infinity,
+//                 ease: "linear",
+//                 duration: 50,
+//               }}
+//             >
+//               {loopedInterests.map((item, index) => (
+//                 <motion.div
+//                   key={index}
+//                   whileHover={{ scale: 1.15, zIndex: 10 }}
+//                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
+//                   className="flex flex-col items-center group cursor-pointer flex-shrink-0 relative"
+//                   style={{ minWidth: "200px" }} // Minimum width to prevent overlap
+//                 >
+//                   {/* Circle with Image */}
+//                   <div className="w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-full overflow-hidden
+//                                   transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-indigo-300/70
+//                                   relative z-10">
+//                     <img
+//                       src={item.image}
+//                       alt={item.title}
+//                       className="w-full h-full object-cover rounded-full transition-all duration-500 group-hover:scale-110"
+//                     />
+//                   </div>
+
+//                   {/* Title (always visible) */}
+//                   <p className="mt-4 text-gray-800 font-semibold text-sm md:text-base lg:text-lg
+//                                 transition-all duration-500 group-hover:text-indigo-600 group-hover:scale-110
+//                                 whitespace-nowrap relative z-10">
+//                     {item.title}
+//                   </p>
+//                 </motion.div>
+//               ))}
+//             </motion.div>
+//           </div>
+//         </div>
+//       </div>
+
+//       <style jsx>{`
+//         .mask-gradient {
+//           mask: linear-gradient(
+//             90deg,
+//             transparent 0%,
+//             black 5%,
+//             black 95%,
+//             transparent 100%
+//           );
+//           -webkit-mask: linear-gradient(
+//             90deg,
+//             transparent 0%,
+//             black 5%,
+//             black 95%,
+//             transparent 100%
+//           );
+//         }
+//       `}</style>
+//     </div>
+//   );
+// }
+
+//======================================================
+//AFTER RESPONSIVE:- Currently Using Code
+//=======================================================
 
 import React from "react";
 import { motion } from "framer-motion";
@@ -170,14 +269,14 @@ const loopedInterests = [...interests, ...interests];
 
 export default function PlanByInterest() {
   return (
-    <div className="text-center py-8 md:py-16 bg-white relative overflow-hidden">
+    <div className="text-center py-12 md:py-14 lg:py-16 bg-white relative">
       {/* Heading */}
       <motion.h1
         initial={{ opacity: 0, y: -30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         viewport={{ once: true }}
-        className="text-2xl xs:text-3xl md:text-5xl font-extrabold px-4"
+        className="text-3xl md:text-4xl lg:text-5xl font-extrabold"
       >
         Plan by{" "}
         <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
@@ -185,54 +284,50 @@ export default function PlanByInterest() {
         </span>
       </motion.h1>
 
-      <p className="text-sm xs:text-base md:text-lg text-gray-600 mt-2 md:mt-3 px-4">
+      <p className="text-base md:text-lg lg:text-lg text-gray-600 mt-2 md:mt-2.5 lg:mt-3">
         Straight from the ones who made it epic.
       </p>
 
       {/* Smooth Auto Sliding Row - Fixed Container */}
-      <div className="mt-8 md:mt-14 relative">
+      <div className="mt-10 md:mt-12 lg:mt-14 relative">
         {/* Mask for horizontal overflow only */}
         <div className="overflow-hidden mask-gradient">
-          <div className="py-4 md:py-8 px-2 md:px-4">
-            {" "}
-            {/* Reduced padding for mobile */}
+          <div className="py-6 md:py-7 lg:py-8 px-3 md:px-3.5 lg:px-4">
             <motion.div
-              className="flex gap-6 xs:gap-8 md:gap-14 items-center" // Reduced gaps for mobile
-              animate={{ x: ["0%", "-100%"] }}
+              className="flex gap-4 md:gap-10 lg:gap-14 items-center"
+              animate={{ x: ["0%", "-100%"], rotateY: [2, -2, 2] }}
               transition={{
                 repeat: Infinity,
                 ease: "linear",
-                duration: 40, // Slightly faster for mobile
+                duration: 50,
               }}
             >
               {loopedInterests.map((item, index) => (
                 <motion.div
                   key={index}
                   whileHover={{ scale: 1.15, zIndex: 10 }}
-                  whileTap={{ scale: 1.05 }} // Added tap feedback for mobile
                   transition={{ type: "spring", stiffness: 200, damping: 20 }}
                   className="flex flex-col items-center group cursor-pointer flex-shrink-0 relative"
-                  style={{ minWidth: "120px" }} // Reduced min-width for mobile
+                  style={{ minWidth: "120px", maxWidth: "200px" }}
                 >
-                  {/* Circle with Image - Smaller on mobile */}
+                  {/* Circle with Image */}
                   <div
-                    className="w-20 h-20 xs:w-24 xs:h-24 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-full overflow-hidden 
+                    className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 rounded-full overflow-hidden 
                                   transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-indigo-300/70
-                                  relative z-10 border-2 border-white shadow-lg"
+                                  relative z-10"
                   >
                     <img
                       src={item.image}
                       alt={item.title}
                       className="w-full h-full object-cover rounded-full transition-all duration-500 group-hover:scale-110"
-                      loading="lazy" // Added lazy loading for mobile
                     />
                   </div>
 
-                  {/* Title (always visible) - Smaller text for mobile */}
+                  {/* Title (always visible) */}
                   <p
-                    className="mt-2 md:mt-4 text-gray-800 font-semibold text-xs xs:text-sm md:text-base lg:text-lg 
+                    className="mt-3 md:mt-3.5 lg:mt-4 text-gray-800 font-semibold text-sm md:text-base lg:text-lg 
                                 transition-all duration-500 group-hover:text-indigo-600 group-hover:scale-110
-                                whitespace-nowrap relative z-10 px-1"
+                                whitespace-nowrap relative z-10"
                   >
                     {item.title}
                   </p>
@@ -243,46 +338,22 @@ export default function PlanByInterest() {
         </div>
       </div>
 
-      {/* Mobile Gradient Overlays for better UX */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-white to-transparent z-20"></div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-white to-transparent z-20"></div>
-
       <style jsx>{`
         .mask-gradient {
           mask: linear-gradient(
             90deg,
             transparent 0%,
-            black 10%,
-            black 90%,
+            black 5%,
+            black 95%,
             transparent 100%
           );
           -webkit-mask: linear-gradient(
             90deg,
             transparent 0%,
-            black 10%,
-            black 90%,
+            black 5%,
+            black 95%,
             transparent 100%
           );
-        }
-
-        /* Enhanced mobile mask */
-        @media (max-width: 768px) {
-          .mask-gradient {
-            mask: linear-gradient(
-              90deg,
-              transparent 0%,
-              black 15%,
-              black 85%,
-              transparent 100%
-            );
-            -webkit-mask: linear-gradient(
-              90deg,
-              transparent 0%,
-              black 15%,
-              black 85%,
-              transparent 100%
-            );
-          }
         }
       `}</style>
     </div>

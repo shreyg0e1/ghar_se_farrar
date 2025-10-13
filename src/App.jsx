@@ -17,6 +17,7 @@ import BlogCards from "./components/HeaderNavigation/BlogComp/BlogCards";
 import GalleryMasonryGrid from "./components/HeaderNavigation/BlogComp/GalleryMasonryGrid";
 import PaymentPage from "./pages/PaymentPage";
 import AboutUs from "./pages/AboutUs";
+import BlogPage from "./pages/BlogPage";
 
 
 function App() {
@@ -67,15 +68,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* <BlogHeroSection/>
-      <FiltersButtonBlog/>
-      <BlogCards/>
-      <GalleryMasonryGrid/>
-      <AboutUs/>
-      <PaymentPage/> */}
-      {/* <CardDetailHerosection/>   */}
-      {/* <FiltersButton/>  */}
-      {/* <EnquiryForm/> */}
+      
 
       <Header />
       <Routes>
@@ -104,6 +97,7 @@ function App() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/gallery" element={<GalleryMasonryGrid />} />
+        <Route path="/blogs" element={<BlogPage />} />
       </Routes>
       <PricelessFooter />
     </BrowserRouter>
