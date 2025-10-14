@@ -288,7 +288,6 @@ const DestinationDetailPage = () => {
 
             <div>
               <PackageOptions
-                packages={apiData.packageOptions}
                 selectedTour={selectedTour}
                 onTourSelect={handleTourSelect}
               />
