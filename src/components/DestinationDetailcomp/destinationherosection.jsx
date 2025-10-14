@@ -200,9 +200,7 @@ export default function DestinationHeroSection({
                       </span>
                     </div>
                     <div className="text-xs sm:text-sm">
-                      <div className="font-medium text-gray-500 whitespace-nowrap">
-                        {(item.days || item.days) === 1 ? "Day in" : "Days in"}
-                      </div>
+                      
                       <div
                         className={`font-semibold transition-colors duration-300 whitespace-nowrap ${
                           hoveredDayIndex === index
@@ -210,7 +208,7 @@ export default function DestinationHeroSection({
                             : "text-gray-800"
                         }`}
                       >
-                        {item.place || item.location}
+                        {item || item}
                       </div>
                     </div>
                   </div>

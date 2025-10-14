@@ -1,53 +1,119 @@
-//======================================================
-//AFTER RESPONSIVE:- Currently Using Code
-//=======================================================
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 
 const PackageOptions = ({
-  packages = [
-    {
-      id: 1,
-      name: "Dual Rider KTM 390 Adventure",
-      type: "dual",
-      available: true,
-    },
-    {
-      id: 2,
-      name: "Dual Rider Royal Enfield Himalayan",
-      type: "dual",
-      available: true,
-    },
-    {
-      id: 3,
-      name: "Seat in Car",
-      type: "car",
-      available: true,
-      featured: true,
-    },
-    {
-      id: 4,
-      name: "Solo Rider KTM 390 Adventure",
-      type: "solo",
-      available: true,
-    },
-    {
-      id: 5,
-      name: "Solo Rider Royal Enfield Himalayan",
-      type: "solo",
-      available: true,
-    },
-  ],
-  onPackageSelect = (pkg) => {
-    console.log("Selected package:", pkg);
-  },
+  packages = [],
+  selectedTour = null,
+  onTourSelect = () => {},
 }) => {
-  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedPackageId, setSelectedPackageId] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  // Set initial selected package when component mounts or selectedTour changes
+  useEffect(() => {
+    if (selectedTour?.packageId) {
+      setSelectedPackageId(selectedTour.packageId);
+    } else if (packages.length > 0) {
+      // Set first package as default
+      setSelectedPackageId(packages[0]._id);
+    }
+  }, [selectedTour, packages]);
+
+  // Set initial selected option when tour changes
+  useEffect(() => {
+    if (selectedTour?.packageOptions?.length > 0) {
+      // Select the first option by default
+      setSelectedOption(selectedTour.packageOptions[0]);
+    } else {
+      setSelectedOption(null);
+    }
+  }, [selectedTour]);
+
+  // Transform API packages to the format needed for display
+  const transformPackages = () => {
+    if (!packages || packages.length === 0) return [];
+
+    const transformedPackages = [];
+
+    packages.forEach((pkg) => {
+      if (pkg.tours && pkg.tours.length > 0) {
+        pkg.tours.forEach((tour, index) => {
+          transformedPackages.push({
+            id: tour._id, // Use tour ID for selection
+            packageId: pkg._id, // Keep package ID reference
+            name: tour.title || pkg.name,
+            type: pkg.name.toLowerCase().includes("group")
+              ? "group"
+              : pkg.name.toLowerCase().includes("family")
+              ? "family"
+              : pkg.name.toLowerCase().includes("romantic")
+              ? "romantic"
+              : "standard",
+            available: true,
+            featured: pkg.name.toLowerCase().includes("best"),
+            duration: tour.duration,
+            price: tour.price,
+            tourData: tour, // Store full tour data
+            hasPackageOptions:
+              tour.packageOptions && tour.packageOptions.length > 0,
+          });
+        });
+      }
+    });
+
+    return transformedPackages;
+  };
+
+  const displayPackages = transformPackages();
 
   const handlePackageClick = (pkg) => {
-    setSelectedPackage(pkg.id);
-    onPackageSelect(pkg);
+    setSelectedPackageId(pkg.packageId);
+    // Pass both the tour data and package data to parent
+    onTourSelect(pkg.tourData, {
+      _id: pkg.packageId,
+      name: pkg.name.split(" - ")[0] || pkg.name,
+    });
   };
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    // Update the selected tour with the new price
+    if (selectedTour) {
+      const updatedTour = {
+        ...selectedTour,
+        price: option.price,
+        selectedOption: option.option,
+      };
+      onTourSelect(updatedTour, {
+        _id: selectedTour.packageId,
+        name: selectedTour.packageName,
+      });
+    }
+  };
+
+  // Get current price (either from selected option or tour base price)
+  const getCurrentPrice = () => {
+    if (selectedOption) {
+      return selectedOption.price;
+    }
+    return selectedTour?.price || "";
+  };
+
+  // If no packages available
+  if (displayPackages.length === 0) {
+    return (
+      <div className="w-full px-4 py-6 md:px-6 lg:px-0">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="font-poppins font-semibold text-gray-800 mb-4 md:mb-5 text-lg md:text-xl lg:text-2xl">
+            Package Options
+          </h2>
+          <div className="text-center py-8 text-gray-500">
+            No package options available
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-4 py-6 md:px-6 lg:px-0">
@@ -150,11 +216,11 @@ const PackageOptions = ({
           Package Options
         </h2>
 
-        {/* Desktop View - Grid Layout (3 columns in row 1, 2 columns in row 2) */}
+        {/* Main Package Selection */}
         <div className="hidden lg:block">
           {/* First Row - 3 items */}
           <div className="grid grid-cols-3 gap-4 mb-4">
-            {packages.slice(0, 3).map((pkg) => (
+            {displayPackages.slice(0, 3).map((pkg) => (
               <button
                 key={pkg.id}
                 onClick={() => handlePackageClick(pkg)}
@@ -162,21 +228,22 @@ const PackageOptions = ({
                 className={`
                   package-button ripple hover-shine font-poppins text-left px-5 py-4 rounded-lg
                   cursor-pointer relative
-                  ${selectedPackage === pkg.id ? "selected" : ""}
+                  ${selectedPackageId === pkg.packageId ? "selected" : ""}
                   ${!pkg.available ? "opacity-50 cursor-not-allowed" : ""}
                 `}
                 style={{
                   backgroundColor:
-                    selectedPackage === pkg.id ? "#E65F25" : "white",
+                    selectedPackageId === pkg.packageId ? "#E65F25" : "white",
                   border:
-                    selectedPackage === pkg.id
+                    selectedPackageId === pkg.packageId
                       ? "3px solid #E65F25"
                       : "2px solid #E5E5E5",
-                  color: selectedPackage === pkg.id ? "white" : "#4A4A4A",
+                  color:
+                    selectedPackageId === pkg.packageId ? "white" : "#4A4A4A",
                 }}
               >
                 {/* Checkmark */}
-                {selectedPackage === pkg.id && (
+                {selectedPackageId === pkg.packageId && (
                   <div
                     className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
                     style={{ border: "2px solid #E65F25" }}
@@ -189,60 +256,79 @@ const PackageOptions = ({
                   </div>
                 )}
 
-                <span className="font-medium text-base relative z-10">
-                  {pkg.name}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          {/* Second Row - 2 items */}
-          <div className="grid grid-cols-3 gap-4">
-            {packages.slice(3, 5).map((pkg) => (
-              <button
-                key={pkg.id}
-                onClick={() => handlePackageClick(pkg)}
-                disabled={!pkg.available}
-                className={`
-                  package-button ripple hover-shine font-poppins text-left px-5 py-4 rounded-lg
-                  cursor-pointer relative
-                  ${selectedPackage === pkg.id ? "selected" : ""}
-                  ${!pkg.available ? "opacity-50 cursor-not-allowed" : ""}
-                `}
-                style={{
-                  backgroundColor:
-                    selectedPackage === pkg.id ? "#E65F25" : "white",
-                  border:
-                    selectedPackage === pkg.id
-                      ? "3px solid #E65F25"
-                      : "2px solid #E5E5E5",
-                  color: selectedPackage === pkg.id ? "white" : "#4A4A4A",
-                }}
-              >
-                {selectedPackage === pkg.id && (
-                  <div
-                    className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
-                    style={{ border: "2px solid #E65F25" }}
-                  >
-                    <Check
-                      size={16}
-                      style={{ color: "#E65F25" }}
-                      strokeWidth={3}
-                    />
+                <div className="relative z-10">
+                  <span className="font-medium text-base block mb-1">
+                    {pkg.name}
+                  </span>
+                  {pkg.duration && (
+                    <span className="text-xs opacity-80">{pkg.duration}</span>
+                  )}
+                  <div className="text-xs font-semibold text-[#E65F25] mt-1">
+                    {getCurrentPrice()}
                   </div>
-                )}
-
-                <span className="font-medium text-base relative z-10">
-                  {pkg.name}
-                </span>
+                </div>
               </button>
             ))}
           </div>
+
+          {/* Second Row - remaining items */}
+          {displayPackages.length > 3 && (
+            <div className="grid grid-cols-3 gap-4">
+              {displayPackages.slice(3).map((pkg) => (
+                <button
+                  key={pkg.id}
+                  onClick={() => handlePackageClick(pkg)}
+                  disabled={!pkg.available}
+                  className={`
+                    package-button ripple hover-shine font-poppins text-left px-5 py-4 rounded-lg
+                    cursor-pointer relative
+                    ${selectedPackageId === pkg.packageId ? "selected" : ""}
+                    ${!pkg.available ? "opacity-50 cursor-not-allowed" : ""}
+                  `}
+                  style={{
+                    backgroundColor:
+                      selectedPackageId === pkg.packageId ? "#E65F25" : "white",
+                    border:
+                      selectedPackageId === pkg.packageId
+                        ? "3px solid #E65F25"
+                        : "2px solid #E5E5E5",
+                    color:
+                      selectedPackageId === pkg.packageId ? "white" : "#4A4A4A",
+                  }}
+                >
+                  {selectedPackageId === pkg.packageId && (
+                    <div
+                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
+                      style={{ border: "2px solid #E65F25" }}
+                    >
+                      <Check
+                        size={16}
+                        style={{ color: "#E65F25" }}
+                        strokeWidth={3}
+                      />
+                    </div>
+                  )}
+
+                  <div className="relative z-10">
+                    <span className="font-medium text-base block mb-1">
+                      {pkg.name}
+                    </span>
+                    {pkg.duration && (
+                      <span className="text-xs opacity-80">{pkg.duration}</span>
+                    )}
+                    <div className="text-xs font-semibold text-[#E65F25] mt-1">
+                      {getCurrentPrice()}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Tablet View - 2 columns */}
         <div className="hidden md:grid lg:hidden grid-cols-2 gap-4">
-          {packages.map((pkg) => (
+          {displayPackages.map((pkg) => (
             <button
               key={pkg.id}
               onClick={() => handlePackageClick(pkg)}
@@ -250,20 +336,21 @@ const PackageOptions = ({
               className={`
                 package-button ripple hover-shine font-poppins text-left px-4 py-3.5 rounded-lg
                 cursor-pointer relative
-                ${selectedPackage === pkg.id ? "selected" : ""}
+                ${selectedPackageId === pkg.packageId ? "selected" : ""}
                 ${!pkg.available ? "opacity-50 cursor-not-allowed" : ""}
               `}
               style={{
                 backgroundColor:
-                  selectedPackage === pkg.id ? "#E65F25" : "white",
+                  selectedPackageId === pkg.packageId ? "#E65F25" : "white",
                 border:
-                  selectedPackage === pkg.id
+                  selectedPackageId === pkg.packageId
                     ? "3px solid #E65F25"
                     : "2px solid #E5E5E5",
-                color: selectedPackage === pkg.id ? "white" : "#4A4A4A",
+                color:
+                  selectedPackageId === pkg.packageId ? "white" : "#4A4A4A",
               }}
             >
-              {selectedPackage === pkg.id && (
+              {selectedPackageId === pkg.packageId && (
                 <div
                   className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
                   style={{ border: "2px solid #E65F25" }}
@@ -276,16 +363,24 @@ const PackageOptions = ({
                 </div>
               )}
 
-              <span className="font-medium text-sm relative z-10">
-                {pkg.name}
-              </span>
+              <div className="relative z-10">
+                <span className="font-medium text-sm block mb-1">
+                  {pkg.name}
+                </span>
+                {pkg.duration && (
+                  <span className="text-xs opacity-80">{pkg.duration}</span>
+                )}
+                <div className="text-xs font-semibold text-[#E65F25] mt-1">
+                  {getCurrentPrice()}
+                </div>
+              </div>
             </button>
           ))}
         </div>
 
         {/* Mobile View - Single column */}
         <div className="md:hidden space-y-3">
-          {packages.map((pkg) => (
+          {displayPackages.map((pkg) => (
             <button
               key={pkg.id}
               onClick={() => handlePackageClick(pkg)}
@@ -293,20 +388,21 @@ const PackageOptions = ({
               className={`
                 package-button ripple hover-shine font-poppins text-left w-full px-5 py-4 rounded-xl
                 cursor-pointer relative
-                ${selectedPackage === pkg.id ? "selected" : ""}
+                ${selectedPackageId === pkg.packageId ? "selected" : ""}
                 ${!pkg.available ? "opacity-50 cursor-not-allowed" : ""}
               `}
               style={{
                 backgroundColor:
-                  selectedPackage === pkg.id ? "#E65F25" : "white",
+                  selectedPackageId === pkg.packageId ? "#E65F25" : "white",
                 border:
-                  selectedPackage === pkg.id
+                  selectedPackageId === pkg.packageId
                     ? "3px solid #E65F25"
                     : "2px solid #E5E5E5",
-                color: selectedPackage === pkg.id ? "white" : "#5A5A5A",
+                color:
+                  selectedPackageId === pkg.packageId ? "white" : "#5A5A5A",
               }}
             >
-              {selectedPackage === pkg.id && (
+              {selectedPackageId === pkg.packageId && (
                 <div
                   className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
                   style={{
@@ -322,12 +418,81 @@ const PackageOptions = ({
                 </div>
               )}
 
-              <span className="font-medium text-base relative z-10">
-                {pkg.name}
-              </span>
+              <div className="relative z-10">
+                <span className="font-medium text-base block mb-1">
+                  {pkg.name}
+                </span>
+                {pkg.duration && (
+                  <span className="text-xs opacity-80">{pkg.duration}</span>
+                )}
+                <div className="text-xs font-semibold text-[#E65F25] mt-1">
+                  {getCurrentPrice()}
+                </div>
+              </div>
             </button>
           ))}
         </div>
+
+        {/* Sub-options for selected tour */}
+        {selectedTour?.packageOptions &&
+          selectedTour.packageOptions.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="font-poppins font-semibold text-gray-800 mb-4 text-lg">
+                Choose Your Experience
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {selectedTour.packageOptions.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleOptionClick(option)}
+                    className={`
+                    package-button ripple hover-shine font-poppins text-left px-4 py-3 rounded-lg
+                    cursor-pointer relative
+                    ${
+                      selectedOption?.option === option.option ? "selected" : ""
+                    }
+                  `}
+                    style={{
+                      backgroundColor:
+                        selectedOption?.option === option.option
+                          ? "#E65F25"
+                          : "white",
+                      border:
+                        selectedOption?.option === option.option
+                          ? "3px solid #E65F25"
+                          : "2px solid #E5E5E5",
+                      color:
+                        selectedOption?.option === option.option
+                          ? "white"
+                          : "#4A4A4A",
+                    }}
+                  >
+                    {selectedOption?.option === option.option && (
+                      <div
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white shadow-lg flex items-center justify-center animate-checkmark"
+                        style={{ border: "2px solid #E65F25" }}
+                      >
+                        <Check
+                          size={14}
+                          style={{ color: "#E65F25" }}
+                          strokeWidth={3}
+                        />
+                      </div>
+                    )}
+
+                    <div className="relative z-10">
+                      <span className="font-medium text-sm block mb-1">
+                        {option.option}
+                      </span>
+                      <div className="text-xs font-semibold opacity-80">
+                        {option.price}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

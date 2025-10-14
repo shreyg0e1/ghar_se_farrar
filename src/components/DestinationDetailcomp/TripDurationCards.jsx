@@ -1,48 +1,54 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 
-export default function TripDurationCards({ tourData }) {
+export default function TripDurationCards({
+  tourData,
+  packages = [],
+  onTourSelect,
+}) {
   const [selectedTrip, setSelectedTrip] = useState(0);
-  const [packageData, setPackageData] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch package data from API
-  const fetchPackageData = async () => {
-    try {
-      setLoading(true);
-      const packageId = localStorage.getItem("id");
-      if (packageId) {
-        const response = await axios.get(
-          `https://crm-ghar-se-frar.onrender.com/package/${packageId}`
-        );
-        setPackageData(response.data.packageData);
-      }
-    } catch (error) {
-      console.error("Error fetching package data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPackageData();
-  }, []);
-
-  // Create package options from API data
+  // Create package options from the props (tourData and packages)
   const createPackageOptions = () => {
-    if (!packageData?.tours || packageData.tours.length === 0) {
-      return null;
+    // If we have specific tourData, create options from packages
+    if (packages && packages.length > 0) {
+      const allTours = [];
+
+      packages.forEach((pkg) => {
+        if (pkg.tours && pkg.tours.length > 0) {
+          pkg.tours.forEach((tour) => {
+            allTours.push({
+              id: tour._id,
+              packageId: pkg._id,
+              title: tour.title,
+              duration: tour.durationThumbnail || tour.duration,
+              price: tour.price,
+              location: tour.location,
+              image: tour.thumbnail,
+              tourData: tour,
+            });
+          });
+        }
+      });
+
+      return allTours;
     }
 
-    return packageData.tours.map((tour, index) => ({
-      id: tour._id,
-      title: tour.title,
-      duration: tour.time,
-      price: `₹${tour.price}`,
-      location: tour.location,
-      image: tour.thumbnail,
-      isSelected: index === 0,
-    }));
+    // Fallback: If we have tourData but no packages array
+    if (tourData) {
+      return [
+        {
+          id: tourData._id,
+          title: tourData.title,
+          duration: tourData.durationThumbnail || tourData.duration,
+          price: tourData.price,
+          location: tourData.location,
+          image: tourData.thumbnail,
+          tourData: tourData,
+        },
+      ];
+    }
+
+    return null;
   };
 
   const packageOptions = createPackageOptions();
@@ -50,30 +56,17 @@ export default function TripDurationCards({ tourData }) {
   // Handle package selection
   const handlePackageSelect = (index) => {
     setSelectedTrip(index);
-    console.log("Selected package:", packageOptions[index]);
+    if (packageOptions && packageOptions[index] && onTourSelect) {
+      // Pass both tour data and package data to parent
+      onTourSelect(packageOptions[index].tourData, {
+        _id: packageOptions[index].packageId,
+        name: packageOptions[index].title,
+      });
+    }
   };
 
-  // If loading
-  if (loading) {
-    return (
-      <div className="w-full font-inter px-3 sm:px-0">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
-          Available Packages
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gray-200 animate-pulse h-40 sm:h-48"
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   // If no packages available
-  if (!packageOptions) {
+  if (!packageOptions || packageOptions.length === 0) {
     return (
       <div className="w-full font-inter px-3 sm:px-0">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
@@ -117,6 +110,10 @@ export default function TripDurationCards({ tourData }) {
                   src={pkg.image}
                   alt={pkg.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://via.placeholder.com/300x200/4A5568/FFFFFF?text=No+Image";
+                  }}
                 />
 
                 {/* Gradient Overlay */}
@@ -190,6 +187,10 @@ export default function TripDurationCards({ tourData }) {
                 src={pkg.image}
                 alt={pkg.title}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                onError={(e) => {
+                  e.target.src =
+                    "https://via.placeholder.com/300x200/4A5568/FFFFFF?text=No+Image";
+                }}
               />
 
               {/* Gradient Overlay */}

@@ -3,7 +3,7 @@ import axios from "axios";
 import { Phone, Calendar, Users, X, CheckCircle, Sparkles } from "lucide-react";
 
 export default function StickyEnquiryForm({
-  formConfig,
+  tourData = null,
   isMobile = false,
   onClose,
 }) {
@@ -19,16 +19,25 @@ export default function StickyEnquiryForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Default data structure (can be replaced with props)
-  const defaultFormConfig = {
-    title: "Leh Ladakh Adventure",
-    currentPrice: "₹23,999",
-    originalPrice: "₹29,999",
-    savings: "₹6,000",
-    countryCode: "+91",
+  // Get tour information for the form
+  const getTourInfo = () => {
+    if (!tourData) {
+      return {
+        title: "Leh Ladakh Adventure",
+        price: "₹23,999",
+        location: "Ladakh, India",
+      };
+    }
+
+    return {
+      title: tourData.title,
+      price: tourData.price,
+      location: tourData.location,
+      duration: tourData.duration,
+    };
   };
 
-  const config = formConfig 
+  const tourInfo = getTourInfo();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +56,7 @@ export default function StickyEnquiryForm({
     try {
       console.log("Form submitted:", formData);
 
-      // Prepare data for API submission
+      // Prepare data for API submission with tour info
       const submissionData = {
         fullName: formData.fullName,
         email: formData.email,
@@ -55,14 +64,16 @@ export default function StickyEnquiryForm({
         date: formData.travelDate,
         traveller: parseInt(formData.travellerCount) || 1,
         message: formData.message,
+        tourTitle: tourInfo.title,
+        tourPrice: tourInfo.price,
+        tourLocation: tourInfo.location,
         submittedAt: new Date().toISOString(),
       };
 
       // Send data to API
       const response = await axios.post(
         "https://crm-ghar-se-frar.onrender.com/enquiry/add/full",
-       {...submissionData}
-        
+        { ...submissionData }
       );
 
       console.log("API Response:", response.data);
@@ -130,24 +141,33 @@ export default function StickyEnquiryForm({
           </div>
         )}
 
-        {/* Header - Responsive */}
+        {/* Tour Info Header */}
         <div className={`${isMobile ? "mb-3" : "mb-4"}`}>
-          
+          <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-2">
+            {tourInfo.title}
+          </h3>
 
-          {/* Price Section - Responsive */}
+          {/* Price Section */}
           <div
             className={`flex items-baseline space-x-2 ${
               isMobile ? "mb-1" : "mb-2"
             }`}
           >
-            
-            
+            <span className="text-xl sm:text-2xl font-bold text-[#E65F25]">
+              {tourInfo.price}
+            </span>
+            <span className="text-sm text-gray-500">per person</span>
           </div>
 
-         
+          {/* Location & Duration */}
+          <div className="text-xs sm:text-sm text-gray-600">
+            <span>{tourInfo.location}</span>
+            {tourInfo.duration && <span className="mx-2">•</span>}
+            {tourInfo.duration && <span>{tourInfo.duration}</span>}
+          </div>
         </div>
 
-        {/* Form - Responsive Spacing */}
+        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className={`space-y-2 sm:space-y-3 ${isMobile ? "pb-2" : ""}`}
@@ -178,27 +198,20 @@ export default function StickyEnquiryForm({
             />
           </div>
 
-          {/* Phone Number - Responsive */}
-          <div className="flex space-x-2">
-            {/* <select className="p-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E65F25] focus:border-[#E65F25] bg-white transition-all duration-200 min-w-[80px]">
-              <option>{config.countryCode}</option>
-              <option>+1</option>
-              <option>+44</option>
-              <option>+61</option>
-              <option>+65</option>
-            </select> */}
+          {/* Phone Number */}
+          <div>
             <input
               type="tel"
               name="phone"
               placeholder="Your Phone"
               value={formData.phone}
               onChange={handleInputChange}
-              className="flex-1 p-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E65F25] focus:border-[#E65F25] transition-all duration-200 placeholder-gray-500"
+              className="w-full p-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E65F25] focus:border-[#E65F25] transition-all duration-200 placeholder-gray-500"
               required
             />
           </div>
 
-          {/* Travel Date and Traveller Count - Responsive */}
+          {/* Travel Date and Traveller Count */}
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
               <input
@@ -229,7 +242,7 @@ export default function StickyEnquiryForm({
             </div>
           </div>
 
-          {/* Message - Responsive */}
+          {/* Message */}
           <div>
             <textarea
               name="message"
@@ -241,7 +254,7 @@ export default function StickyEnquiryForm({
             ></textarea>
           </div>
 
-          {/* Submit Button - Responsive */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
@@ -297,7 +310,7 @@ export default function StickyEnquiryForm({
           )}
         </form>
 
-        {/* Trust Indicators - Responsive */}
+        {/* Trust Indicators */}
         {!isMobile && (
           <div className="mt-4 pt-3 border-t border-gray-100">
             <div className="flex items-center justify-center space-x-2 sm:space-x-3 text-xs text-gray-500 flex-wrap gap-1">
@@ -350,9 +363,9 @@ export default function StickyEnquiryForm({
                 Enquiry Submitted!
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Thank you for your interest! Our travel
-                experts will contact you within 24 hours to discuss your perfect
-                trip. ✨
+                Thank you for your interest in <strong>{tourInfo.title}</strong>
+                ! Our travel experts will contact you within 24 hours to discuss
+                your perfect trip. ✨
               </p>
             </div>
 

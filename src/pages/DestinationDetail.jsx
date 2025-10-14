@@ -29,8 +29,8 @@ const DestinationDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showMobileForm, setShowMobileForm] = useState(false);
+  const [selectedTour, setSelectedTour] = useState(null);
   const location = useLocation();
-  const packageId = localStorage.getItem("id");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -61,46 +61,92 @@ const DestinationDetailPage = () => {
     }
   }, [id]);
 
-  // Get the first tour from the first package for hero section
-  const getTourData = () => {
-    if (!apiData?.packages?.[0]?.tours?.[0]) return null;
-    return apiData.packages[0].tours[0];
-  };
-
-  const tourData = getTourData();
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "Itinerary":
-        return <TripItinerary tourData={tourData} />;
-      case "Overview":
-        return <TripOverview tourData={tourData} />;
-      case "Offering":
-        return <TripOfferings tourData={tourData} />;
-      case "Essentials":
-        return <TripEssentials tourData={tourData} />;
-      default:
-        return <TripItinerary tourData={tourData} />;
+  // Set initial selected tour when API data loads
+  useEffect(() => {
+    if (apiData?.packages?.length > 0) {
+      const firstPackage = apiData.packages[0];
+      if (firstPackage?.tours?.length > 0) {
+        setSelectedTour({
+          ...firstPackage.tours[0],
+          packageId: firstPackage._id,
+          packageName: firstPackage.name,
+        });
+      }
     }
+  }, [apiData]);
+
+  // Handle tour selection from PackageOptions
+  const handleTourSelect = (tour, packageData) => {
+    setSelectedTour({
+      ...tour,
+      packageId: packageData._id,
+      packageName: packageData.name,
+    });
+    // Scroll to top when tour changes
+    window.scrollTo(0, 0);
   };
 
-  // Prepare itinerary data from API tour data
+  // Get all available tours from all packages
+  const getAllTours = () => {
+    if (!apiData?.packages) return [];
+
+    const allTours = [];
+    apiData.packages.forEach((pkg) => {
+      pkg.tours.forEach((tour) => {
+        allTours.push({
+          ...tour,
+          packageId: pkg._id,
+          packageName: pkg.name,
+        });
+      });
+    });
+
+    return allTours;
+  };
+
+  // Prepare itinerary data from selected tour
   const prepareItinerary = () => {
-    if (tourData?.itineary && tourData.itineary.length > 0) {
-      return tourData.itineary.map((item, index) => ({
+    if (!selectedTour) return [];
+
+    // If API has proper itinerary data, use it
+    if (selectedTour.itineary && selectedTour.itineary.length > 0) {
+      return selectedTour.itineary.map((item, index) => ({
         days: index + 1,
         place: item.day || `Day ${index + 1}`,
+        details: item.details,
       }));
     }
 
-    // Default itinerary based on duration
-    const durationMatch = tourData?.duration?.match(/(\d+)/);
-    const days = durationMatch ? parseInt(durationMatch[0]) : 7;
+    // Fallback: Create itinerary based on destination routes
+    
 
-    return [
-      { days: Math.floor(days / 2), place: tourData?.location || "Leh" },
-      { days: Math.ceil(days / 2), place: "Nubra Valley & Pangong" },
-    ];
+    // Final fallback: Use duration to create basic itinerary
+    const durationMatch = selectedTour.duration?.match(/(\d+)/);
+    const days = durationMatch ? parseInt(durationMatch[0]) : 6;
+
+    const defaultPlaces = ["Leh", "Nubra Valley", "Pangong Tso", "Leh"];
+    return Array.from({ length: days }, (_, index) => ({
+      days: index + 1,
+      place: defaultPlaces[Math.min(index, defaultPlaces.length - 1)],
+      details: `Day ${index + 1} activities`,
+    }));
+  };
+
+  const renderTabContent = () => {
+    if (!selectedTour) return null;
+
+    switch (activeTab) {
+      case "Itinerary":
+        return <TripItinerary tourData={selectedTour} />;
+      case "Overview":
+        return <TripOverview tourData={selectedTour} />;
+      case "Offering":
+        return <TripOfferings tourData={selectedTour} />;
+      case "Essentials":
+        return <TripEssentials tourData={selectedTour} />;
+      default:
+        return <TripItinerary tourData={selectedTour} />;
+    }
   };
 
   if (loading) {
@@ -133,7 +179,7 @@ const DestinationDetailPage = () => {
     );
   }
 
-  if (!apiData || !tourData) {
+  if (!apiData || !selectedTour) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center">
@@ -150,18 +196,19 @@ const DestinationDetailPage = () => {
       {/* Hero Section with API data */}
       <div className="pt-16">
         <DestinationHeroSection
-          title={tourData.title}
-          duration={tourData.time}
-          itinerary={prepareItinerary()}
-          price={tourData.price}
+          title={selectedTour.title}
+          duration={selectedTour.durationThumbnail || selectedTour.duration}
+          itinerary={selectedTour.plans}
+          price={selectedTour.price}
           oldPrice={
             (
-              parseInt(tourData.price?.replace(/,/g, "")) * 1.2
+              parseInt(selectedTour.price?.replace(/[₹,]/g, "")) * 1.2
             ).toLocaleString() || "28,799"
           }
           rating="4.8"
           reviews="150"
-          images={tourData.images}
+          images={selectedTour.images}
+          video={selectedTour.video}
         />
       </div>
 
@@ -216,7 +263,7 @@ const DestinationDetailPage = () => {
               </button>
             </div>
             <div className="p-4">
-              <StickyEnquiryForm tourData={tourData} isMobile={true} />
+              <StickyEnquiryForm tourData={selectedTour} isMobile={true} />
             </div>
           </div>
         </div>
@@ -228,19 +275,27 @@ const DestinationDetailPage = () => {
           {/* Left Column - Main Content */}
           <div className="lg:col-span-8 space-y-6 lg:space-y-8">
             <div>
-              <TripDurationCards tourData={tourData} />
+              <TripDurationCards
+                tourData={selectedTour}
+                packages={apiData.packages}
+                onTourSelect={handleTourSelect}
+              />
             </div>
 
             <div>
-              <DestinationRoutes tourData={tourData} />
+              <DestinationRoutes tourData={selectedTour} />
             </div>
 
             <div>
-              <PackageOptions tourData={tourData} />
+              <PackageOptions
+                packages={apiData.packageOptions}
+                selectedTour={selectedTour}
+                onTourSelect={handleTourSelect}
+              />
             </div>
 
             <div>
-              <TripHighlights tourData={tourData} />
+              <TripHighlights tourData={selectedTour} />
             </div>
 
             <TabNavigation
@@ -254,7 +309,7 @@ const DestinationDetailPage = () => {
 
           {/* Right Column - Sticky Form (Desktop only) */}
           <div className="hidden lg:block lg:col-span-4">
-            <StickyEnquiryForm tourData={tourData} />
+            <StickyEnquiryForm tourData={selectedTour} />
           </div>
         </div>
       </div>
@@ -262,7 +317,7 @@ const DestinationDetailPage = () => {
       {/* Bottom Sections - Full Width */}
       <div className="w-full space-y-0">
         <EndOfTrip />
-        <KnowBeforeYouGo knowBeforeYouGo={tourData.knowBeforeYouGo} />
+        <KnowBeforeYouGo knowBeforeYouGo={selectedTour.knowBeforeYouGo} />
         <CallBack />
         <RefundPolicy />
         <CancellationPolicy />

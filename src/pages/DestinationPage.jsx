@@ -29,14 +29,13 @@ const DestinationPage = () => {
   }, [location.pathname]);
 
   // Transform API package data to match InfiniteCarouselFourVisible format
-  const transformPackageToTour = (pkg) => {
-    const tour = pkg.tours[0];
+  const transformTourToCard = (tour, pkg) => {
     if (!tour) return null;
 
     return {
       title: tour.title,
       image: tour.thumbnail,
-      price: parseInt(tour.price?.replace(/,/g, "") || 0),
+      price: parseInt(tour.price?.replace(/[₹,]/g, "") || 0),
       rating: 4.8,
       location: tour.location,
       duration: tour.duration,
@@ -47,6 +46,8 @@ const DestinationPage = () => {
       highlights: tour.tripHighlights || [],
       featured: true,
       id: tour?._id,
+      description: tour.overview?.[0]?.description || "",
+      itinerary: tour.itineary || [],
     };
   };
 
@@ -72,7 +73,7 @@ const DestinationPage = () => {
     }
   }, [detailsId]);
 
-  // Prepare tour data from API - FIXED DUPLICATE ISSUE
+  // Smart categorization of tours based on content analysis
   const prepareTourData = () => {
     const tourData = {
       bestSelling: [],
@@ -83,32 +84,113 @@ const DestinationPage = () => {
 
     if (!apiData?.packages) return tourData;
 
-    const processedPackages = new Set();
-
+    // Extract all tours from all packages
+    const allTours = [];
     apiData.packages.forEach((pkg) => {
-      if (processedPackages.has(pkg._id)) return;
+      pkg.tours.forEach((tour) => {
+        const transformedTour = transformTourToCard(tour, pkg);
+        if (transformedTour) {
+          allTours.push(transformedTour);
+        }
+      });
+    });
 
-      const transformedTour = transformPackageToTour(pkg);
-      if (!transformedTour) return;
+    console.log("All tours available:", allTours.length);
 
-      processedPackages.add(pkg._id);
+    // Smart categorization logic
+    allTours.forEach((tour, index) => {
+      const title = tour.title.toLowerCase();
+      const description = tour.description.toLowerCase();
+      const highlights = tour.highlights.join(" ").toLowerCase();
+      const duration = parseInt(tour.duration) || 0;
 
-      const packageName = pkg.name.toLowerCase();
-
-      if (packageName.includes("group")) {
-        tourData.groupTour.push(transformedTour);
-      } else if (packageName.includes("family")) {
-        tourData.familyTours.push(transformedTour);
+      // Analyze content to determine category
+      if (title.includes("essence") || index === 0) {
+        // First tour or "Essence" - typically best selling
+        tourData.bestSelling.push(tour);
       } else if (
-        packageName.includes("romantic") ||
-        packageName.includes("couple")
+        title.includes("explorer") ||
+        title.includes("circuit") ||
+        duration >= 7
       ) {
-        tourData.romanticTrips.push(transformedTour);
+        // Longer tours or explorer circuits - good for groups
+        tourData.groupTour.push(tour);
+      } else if (
+        title.includes("expedition") ||
+        highlights.includes("observatory") ||
+        highlights.includes("village")
+      ) {
+        // Educational/Adventure tours - good for families
+        tourData.familyTours.push(tour);
+      } else if (
+        title.includes("grand") ||
+        highlights.includes("sunset") ||
+        highlights.includes("bonfire")
+      ) {
+        // Luxury/Scenic tours - good for romantic trips
+        tourData.romanticTrips.push(tour);
       } else {
-        tourData.bestSelling.push(transformedTour);
+        // Default fallback - distribute evenly
+        const categories = Object.keys(tourData);
+        const category = categories[index % categories.length];
+        tourData[category].push(tour);
       }
     });
 
+    // If any category is empty, redistribute tours
+    const emptyCategories = Object.keys(tourData).filter(
+      (key) => tourData[key].length === 0
+    );
+    if (emptyCategories.length > 0 && allTours.length > 0) {
+      emptyCategories.forEach((category) => {
+        // Find a tour that could fit this category
+        const suitableTour = allTours.find((tour) => {
+          if (
+            category === "romanticTrips" &&
+            tour.highlights.some(
+              (h) =>
+                h.toLowerCase().includes("lake") ||
+                h.toLowerCase().includes("sunset")
+            )
+          ) {
+            return true;
+          }
+          if (
+            category === "familyTours" &&
+            tour.duration &&
+            parseInt(tour.duration) <= 7
+          ) {
+            return true;
+          }
+          if (
+            category === "groupTour" &&
+            tour.duration &&
+            parseInt(tour.duration) >= 6
+          ) {
+            return true;
+          }
+          return false;
+        });
+
+        if (
+          suitableTour &&
+          !Object.values(tourData).flat().includes(suitableTour)
+        ) {
+          tourData[category].push(suitableTour);
+        }
+      });
+    }
+
+    // Final fallback - ensure at least one tour in each category if we have enough tours
+    if (allTours.length >= Object.keys(tourData).length) {
+      Object.keys(tourData).forEach((category, index) => {
+        if (tourData[category].length === 0 && allTours[index]) {
+          tourData[category].push(allTours[index]);
+        }
+      });
+    }
+
+    console.log("Categorized tour data:", tourData);
     return tourData;
   };
 

@@ -5,26 +5,76 @@ export default function TripItinerary({ tourData }) {
   const [expandedDays, setExpandedDays] = useState({});
   const [allExpanded, setAllExpanded] = useState(false);
 
-  // Get itinerary data from API
+  // Get itinerary data from API - FIXED VERSION
   const getItineraryData = () => {
-    // If no tourData or no itineary, return null
-    if (!tourData || !tourData.itineary) {
+    // If no tourData, return null
+    if (!tourData) {
       return null;
     }
 
-    // Transform API data to match component structure
-    const transformedDays = tourData.itineary.map((item, index) => ({
-      day: index + 1,
-      title: item.day,
-      image: item.image,
-      details: item.details
-        ? [item.details]
-        : ["No details available for this day"],
-    }));
+    // Check if we have proper itinerary data from API
+    if (
+      tourData.itineary &&
+      Array.isArray(tourData.itineary) &&
+      tourData.itineary.length > 0
+    ) {
+      // Transform API data to match component structure
+      const transformedDays = tourData.itineary.map((item, index) => ({
+        day: index + 1,
+        title: item.day || `Day ${index + 1}`,
+        details: item.details
+          ? [item.details]
+          : ["No details available for this day"],
+        // You can add images if available in your API
+        image: item.image || null,
+      }));
 
-    return {
-      days: transformedDays,
-    };
+      return {
+        days: transformedDays,
+      };
+    }
+
+    // Fallback: Create itinerary from destination routes if available
+    if (
+      tourData.destinationRoutes &&
+      Array.isArray(tourData.destinationRoutes) &&
+      tourData.destinationRoutes.length > 0
+    ) {
+      const transformedDays = tourData.destinationRoutes.map(
+        (route, index) => ({
+          day: index + 1,
+          title: route,
+          details: [`Exploring ${route} and surrounding areas`],
+          image: null,
+        })
+      );
+
+      return {
+        days: transformedDays,
+      };
+    }
+
+    // Final fallback: Use trip highlights
+    if (
+      tourData.tripHighlights &&
+      Array.isArray(tourData.tripHighlights) &&
+      tourData.tripHighlights.length > 0
+    ) {
+      const transformedDays = tourData.tripHighlights.map(
+        (highlight, index) => ({
+          day: index + 1,
+          title: `Day ${index + 1}: ${highlight}`,
+          details: [`Experience ${highlight} and enjoy the scenic beauty`],
+          image: null,
+        })
+      );
+
+      return {
+        days: transformedDays,
+      };
+    }
+
+    return null;
   };
 
   const itineraryData = getItineraryData();
@@ -37,6 +87,8 @@ export default function TripItinerary({ tourData }) {
   };
 
   const toggleAllDays = () => {
+    if (!itineraryData) return;
+
     if (allExpanded) {
       setExpandedDays({});
     } else {
@@ -55,12 +107,23 @@ export default function TripItinerary({ tourData }) {
       <div className="w-full font-inter p-4 sm:p-6 text-center">
         <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
           <div className="text-4xl mb-4">🗺️</div>
-          <p className="text-gray-500 text-base sm:text-lg">
-            No itinerary details available
+          <h3 className="text-gray-700 font-semibold text-lg mb-2">
+            Itinerary Details
+          </h3>
+          <p className="text-gray-500 text-base sm:text-lg mb-4">
+            Detailed day-by-day itinerary coming soon
           </p>
-          <p className="text-gray-400 text-sm mt-2">
-            Check back later for detailed day-by-day plans
-          </p>
+          <div className="bg-gray-50 rounded-lg p-4 text-left max-w-md mx-auto">
+            <h4 className="font-semibold text-gray-700 mb-2">
+              What to Expect:
+            </h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Multiple destination experiences</li>
+              <li>• Guided tours and activities</li>
+              <li>• Comfortable accommodations</li>
+              <li>• Local cuisine experiences</li>
+            </ul>
+          </div>
         </div>
       </div>
     );

@@ -12,35 +12,37 @@ import {
 
 const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleCards, setVisibleCards] = useState(4); // Default for desktop
+  const [visibleCards, setVisibleCards] = useState(4);
+  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
   const navigate = useNavigate();
 
-  // Update visible cards based on screen size
+  // Update visible cards and mobile detection based on screen size
   useEffect(() => {
-    const updateVisibleCards = () => {
-      if (window.innerWidth < 640) {
-        setVisibleCards(1.2); // Show partial next card on mobile
-      } else if (window.innerWidth < 768) {
+    const updateLayout = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+
+      if (width < 640) {
+        setVisibleCards(1.2);
+      } else if (width < 768) {
         setVisibleCards(2);
-      } else if (window.innerWidth < 1024) {
+      } else if (width < 1024) {
         setVisibleCards(3);
       } else {
         setVisibleCards(4);
       }
     };
 
-    updateVisibleCards();
-    window.addEventListener("resize", updateVisibleCards);
-    return () => window.removeEventListener("resize", updateVisibleCards);
+    updateLayout();
+    window.addEventListener("resize", updateLayout);
+    return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
-  // Create infinite loop by triplicating tours only if we have tours
-  const extendedTours =
-    tours.length > 0
-      ? [...tours, ...tours, ...tours, ...tours, ...tours, ...tours]
-      : [];
+  // Create infinite loop by duplicating tours only if we have tours
+  const extendedTours = tours.length > 0 ? [...tours, ...tours, ...tours] : [];
 
+  // Initialize current index when tours change
   useEffect(() => {
     if (tours.length > 0) {
       setCurrentIndex(tours.length);
@@ -55,18 +57,21 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
     setCurrentIndex((prev) => prev - 1);
   };
 
+  // Handle infinite loop
   useEffect(() => {
     if (tours.length === 0) return;
 
-    if (currentIndex >= tours.length * 2) {
+    const totalTours = tours.length;
+
+    if (currentIndex >= totalTours * 2) {
       const timer = setTimeout(() => {
-        setCurrentIndex(tours.length);
-      }, 550);
+        setCurrentIndex(totalTours);
+      }, 50); // Reduced timeout for smoother transition
       return () => clearTimeout(timer);
-    } else if (currentIndex < tours.length) {
+    } else if (currentIndex < totalTours) {
       const timer = setTimeout(() => {
-        setCurrentIndex(tours.length * 2 - 1);
-      }, 550);
+        setCurrentIndex(totalTours * 2 - 1);
+      }, 50);
       return () => clearTimeout(timer);
     }
   }, [currentIndex, tours.length]);
@@ -87,6 +92,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
   const handleBookNowClick = (e, tour) => {
     e.stopPropagation();
     console.log("Book Now clicked for tour:", tour.title);
+    // Add your booking logic here
   };
 
   const TourCard = ({ tour }) => (
@@ -107,9 +113,12 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
       {/* Image Container */}
       <div className="relative overflow-hidden h-28 sm:h-36">
         <img
-          src={tour.image}
+          src={tour.image || "/default-tour-image.jpg"}
           alt={tour.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          onError={(e) => {
+            e.target.src = "/default-tour-image.jpg";
+          }}
         />
 
         {/* Rating Badge */}
@@ -286,7 +295,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
         </div>
 
         {/* Mobile Indicators */}
-        {window.innerWidth < 768 && tours.length > 1 && (
+        {isMobile && tours.length > 1 && (
           <div className="flex justify-center mt-6 space-x-2">
             {tours.slice(0, Math.min(5, tours.length)).map((_, dotIndex) => (
               <button
@@ -300,6 +309,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
                   const realStart = tours.length;
                   setCurrentIndex(realStart + dotIndex);
                 }}
+                aria-label={`Go to slide ${dotIndex + 1}`}
               />
             ))}
           </div>
