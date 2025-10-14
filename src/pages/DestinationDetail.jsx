@@ -18,6 +18,7 @@ import KnowBeforeYouGo from "../components/DestinationDetailcomp/KnowBeforeYouGo
 import CallBack from "../components/DestinationDetailcomp/CallBack";
 import RefundPolicy from "../components/DestinationDetailcomp/RefundPolicy";
 import CancellationPolicy from "../components/DestinationDetailcomp/CancellationPolicy";
+import PackageOptions from "../components/DestinationDetailcomp/PackageOptions.jsx";
 
 const DestinationDetailPage = () => {
   const { id } = useParams();
@@ -232,6 +233,10 @@ const DestinationDetailPage = () => {
 
             <div>
               <DestinationRoutes tourData={tourData} />
+            </div>
+
+            <div>
+              <PackageOptions tourData={tourData} />
             </div>
 
             <div>
