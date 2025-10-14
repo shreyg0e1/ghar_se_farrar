@@ -26,7 +26,7 @@ const DestinationPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+  }, []);
 
   // Transform API package data to match InfiniteCarouselFourVisible format
   const transformTourToCard = (tour, pkg) => {
@@ -34,7 +34,7 @@ const DestinationPage = () => {
 
     return {
       title: tour.title,
-      image: tour.thumbnail,
+      image: "https://peakvisor.com/photo/Ladakh-India-Nubra-valley-Leh.jpg",
       price: parseInt(tour.price?.replace(/[₹,]/g, "") || 0),
       rating: 4.8,
       location: tour.location,
@@ -71,7 +71,7 @@ const DestinationPage = () => {
     if (detailsId) {
       getDetails();
     }
-  }, [detailsId]);
+  }, []);
 
   // Smart categorization of tours based on content analysis
   const prepareTourData = () => {
