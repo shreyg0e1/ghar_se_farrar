@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { useParams, useLocation } from "react-router-dom";
 import CardDetailHeroSection from "../components/CardDetailcomp/CardDetailHerosection.jsx";
 import FiltersButton from "../components/CardDetailcomp/FiltersButton";
@@ -10,26 +16,22 @@ import axios from "axios";
 const DestinationPage = () => {
   const details = useParams();
   const detailsId = details?.id;
-  console.log(detailsId);
+  console.log("Destination ID:", detailsId);
+
   const URL = "https://crm-ghar-se-frar.onrender.com";
   const [activeFilter, setActiveFilter] = useState("bestSelling");
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const activeComponentRef = useRef(null);
-  const { destinationId } = useParams();
   const location = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   // Transform API package data to match InfiniteCarouselFourVisible format
-  const transformTourToCard = (tour, pkg) => {
+  const transformTourToCard = useCallback((tour, pkg) => {
     if (!tour) return null;
 
     return {
@@ -49,14 +51,15 @@ const DestinationPage = () => {
       description: tour.overview?.[0]?.description || "",
       itinerary: tour.itineary || [],
     };
-  };
+  }, []);
 
   // Get details from API
-  const getDetails = async () => {
+  const getDetails = useCallback(async () => {
     try {
       setLoading(true);
+      console.log("Fetching data for ID:", detailsId);
       const { data } = await axios.get(`${URL}/detail/${detailsId}`);
-      console.log("API Response:", data?.detail);
+      console.log("API Response received:", data?.detail);
       setApiData(data?.detail);
       setError(null);
     } catch (error) {
@@ -65,16 +68,18 @@ const DestinationPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [detailsId]);
 
   useEffect(() => {
     if (detailsId) {
       getDetails();
     }
-  }, []);
+  }, [detailsId, getDetails]);
 
-  // Smart categorization of tours based on content analysis
-  const prepareTourData = () => {
+  // Smart categorization of tours based on content analysis - MEMOIZED
+  const tourData = useMemo(() => {
+    console.log("Preparing tour data from API data:", apiData);
+
     const tourData = {
       bestSelling: [],
       groupTour: [],
@@ -82,7 +87,10 @@ const DestinationPage = () => {
       romanticTrips: [],
     };
 
-    if (!apiData?.packages) return tourData;
+    if (!apiData?.packages) {
+      console.log("No packages found in API data");
+      return tourData;
+    }
 
     // Extract all tours from all packages
     const allTours = [];
@@ -95,7 +103,7 @@ const DestinationPage = () => {
       });
     });
 
-    console.log("All tours available:", allTours.length);
+    console.log("All tours transformed:", allTours.length, allTours);
 
     // Smart categorization logic
     allTours.forEach((tour, index) => {
@@ -106,31 +114,26 @@ const DestinationPage = () => {
 
       // Analyze content to determine category
       if (title.includes("essence") || index === 0) {
-        // First tour or "Essence" - typically best selling
         tourData.bestSelling.push(tour);
       } else if (
         title.includes("explorer") ||
         title.includes("circuit") ||
         duration >= 7
       ) {
-        // Longer tours or explorer circuits - good for groups
         tourData.groupTour.push(tour);
       } else if (
         title.includes("expedition") ||
         highlights.includes("observatory") ||
         highlights.includes("village")
       ) {
-        // Educational/Adventure tours - good for families
         tourData.familyTours.push(tour);
       } else if (
         title.includes("grand") ||
         highlights.includes("sunset") ||
         highlights.includes("bonfire")
       ) {
-        // Luxury/Scenic tours - good for romantic trips
         tourData.romanticTrips.push(tour);
       } else {
-        // Default fallback - distribute evenly
         const categories = Object.keys(tourData);
         const category = categories[index % categories.length];
         tourData[category].push(tour);
@@ -143,7 +146,6 @@ const DestinationPage = () => {
     );
     if (emptyCategories.length > 0 && allTours.length > 0) {
       emptyCategories.forEach((category) => {
-        // Find a tour that could fit this category
         const suitableTour = allTours.find((tour) => {
           if (
             category === "romanticTrips" &&
@@ -172,10 +174,7 @@ const DestinationPage = () => {
           return false;
         });
 
-        if (
-          suitableTour &&
-          !Object.values(tourData).flat().includes(suitableTour)
-        ) {
+        if (suitableTour) {
           tourData[category].push(suitableTour);
         }
       });
@@ -190,28 +189,14 @@ const DestinationPage = () => {
       });
     }
 
-    console.log("Categorized tour data:", tourData);
+    console.log("Final categorized tour data:", tourData);
     return tourData;
-  };
+  }, [apiData, transformTourToCard]);
 
-  const tourData = prepareTourData();
-
-  // Prepare destination data for hero section
-  const destinationData = apiData
-    ? {
-        title: apiData.packageName,
-        offer: `Book Now To Get Upto ${apiData.discount}% Off`,
-        videos: apiData.video
-          ? [apiData.video]
-          : [
-              "/gallery/DestinationPageImg/Ladakh/Vid1.mp4",
-              "/gallery/DestinationPageImg/Ladakh/Vid2.mp4",
-              "/gallery/DestinationPageImg/Ladakh/Vid3.mp4",
-              "/gallery/DestinationPageImg/Ladakh/Vid4.mp4",
-            ],
-        startingPrice: apiData.price,
-      }
-    : {
+  // Prepare destination data for hero section - MEMOIZED
+  const destinationData = useMemo(() => {
+    if (!apiData) {
+      return {
         title: "Leh Ladakh Tour Packages",
         offer: "Book Now To Get Upto 30% Off",
         videos: [
@@ -222,8 +207,24 @@ const DestinationPage = () => {
         ],
         startingPrice: "15,800",
       };
+    }
 
-  const handleFilterChange = (filterId) => {
+    return {
+      title: apiData.packageName,
+      offer: `Book Now To Get Upto ${apiData.discount}% Off`,
+      videos: apiData.video
+        ? [apiData.video]
+        : [
+            "/gallery/DestinationPageImg/Ladakh/Vid1.mp4",
+            "/gallery/DestinationPageImg/Ladakh/Vid2.mp4",
+            "/gallery/DestinationPageImg/Ladakh/Vid3.mp4",
+            "/gallery/DestinationPageImg/Ladakh/Vid4.mp4",
+          ],
+      startingPrice: apiData.price,
+    };
+  }, [apiData]);
+
+  const handleFilterChange = useCallback((filterId) => {
     setActiveFilter(filterId);
     setTimeout(() => {
       if (activeComponentRef.current) {
@@ -233,9 +234,9 @@ const DestinationPage = () => {
         });
       }
     }, 100);
-  };
+  }, []);
 
-  const getActiveComponent = () => {
+  const getActiveComponent = useCallback(() => {
     const tours = tourData[activeFilter] || [];
     const titles = {
       bestSelling: "Best Selling Ladakh Tours",
@@ -243,6 +244,12 @@ const DestinationPage = () => {
       familyTours: "Top Family Trips to Ladakh",
       romanticTrips: "Romantic Ladakh Tours for Couples",
     };
+
+    console.log(
+      `Rendering active component for ${activeFilter}:`,
+      tours.length,
+      "tours"
+    );
 
     return (
       <div ref={activeComponentRef} className="px-3 sm:px-4">
@@ -253,9 +260,9 @@ const DestinationPage = () => {
         />
       </div>
     );
-  };
+  }, [activeFilter, tourData, detailsId]);
 
-  const getOtherComponents = () => {
+  const getOtherComponents = useCallback(() => {
     const otherFilters = Object.keys(tourData).filter(
       (key) => key !== activeFilter && tourData[key].length > 0
     );
@@ -266,6 +273,8 @@ const DestinationPage = () => {
       romanticTrips: "Romantic Ladakh Tours for Couples",
     };
 
+    console.log("Rendering other components:", otherFilters);
+
     return otherFilters.map((filterKey) => (
       <div key={filterKey} className="px-3 sm:px-4">
         <InfiniteCarouselFourVisible
@@ -275,7 +284,18 @@ const DestinationPage = () => {
         />
       </div>
     ));
-  };
+  }, [activeFilter, tourData, detailsId]);
+
+  // Debug effect to log renders
+  useEffect(() => {
+    console.log("DestinationPage rendered", {
+      loading,
+      hasApiData: !!apiData,
+      tourDataCounts: tourData
+        ? Object.keys(tourData).map((key) => `${key}: ${tourData[key].length}`)
+        : "no tourData",
+    });
+  });
 
   if (loading) {
     return (
@@ -367,4 +387,4 @@ const DestinationPage = () => {
   );
 };
 
-export default DestinationPage;
+export default React.memo(DestinationPage);
