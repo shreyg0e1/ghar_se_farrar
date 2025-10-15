@@ -12,7 +12,7 @@ export default function TripDurationCards({
     // If we have specific tourData, create options from packages
     if (packages && packages.length > 0) {
       const allTours = [];
-
+      console.log("Packages->", packages)
       packages.forEach((pkg) => {
         if (pkg.tours && pkg.tours.length > 0) {
           pkg.tours.forEach((tour) => {
@@ -110,10 +110,10 @@ export default function TripDurationCards({
                   src={pkg.image}
                   alt={pkg.title}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/300x200/4A5568/FFFFFF?text=No+Image";
-                  }}
+                  // onError={(e) => {
+                  //   e.target.src =
+                  //     "https://via.placeholder.com/300x200/4A5568/FFFFFF?text=No+Image";
+                  // }}
                 />
 
                 {/* Gradient Overlay */}

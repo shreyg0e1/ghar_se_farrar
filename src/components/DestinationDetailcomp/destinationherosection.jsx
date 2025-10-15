@@ -7,56 +7,49 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import ladakhbike from "../../../public/gallery/ladakhbike.jpeg";
-import ladakhhotel from "../../../public/gallery/ladakhhotel.jpeg";
-import ladakhactivity from "../../../public/gallery/ladakhactivity.jpeg";
-import ladakhview from "../../../public/gallery/ladakhview.jpeg";
 
 export default function DestinationHeroSection({
-  title = "Ladakh Adventure Expedition with Turtuk Village",
-  duration = "7D/6N",
-  itinerary = [
-    { days: 2, place: "Leh" },
-    { days: 2, place: "Nubra Valley" },
-    { days: 1, place: "Pangong Tso" },
-    { days: 2, place: "Leh" },
-  ],
-  price = "23,999",
-  oldPrice = "28,799",
-  rating = "4.8",
-  reviews = "150",
-  images = [],
-  video = "/gallery/ladakhdestination.mp4",
+  title,
+  duration,
+  itinerary,
+  price,
+  oldPrice,
+  rating,
+  reviews,
+  images,
+  video,
+  categories,
 }) {
   const [hoveredDayIndex, setHoveredDayIndex] = useState(null);
   const [showMobileItinerary, setShowMobileItinerary] = useState(false);
 
-  // Use the props passed from the parent component (API data)
+  // Use props directly without static fallbacks
   const tripData = {
     title: title,
     videoUrl: video,
     rating: parseFloat(rating),
     reviews: parseInt(reviews),
-    currentPrice: parseInt(price.replace(/,/g, "")),
-    originalPrice: parseInt(oldPrice.replace(/,/g, "")),
+    currentPrice: parseInt(price?.toString().replace(/[^0-9]/g, "") || "0"),
+    originalPrice: parseInt(oldPrice?.toString().replace(/[^0-9]/g, "") || "0"),
     duration: duration,
     itinerary: itinerary,
-    categories: [
+    categories: categories || [
+      // Use only the images from props
       {
         title: "Destinations",
-        image: ladakhbike,
+        image: images[0],
       },
       {
         title: "Stays",
-        image: ladakhhotel,
+        image: images[1],
       },
       {
         title: "Activity & Sightseeing",
-        image: ladakhactivity,
+        image: images[2],
       },
       {
         title: "View All Images",
-        image: ladakhview,
+        image: images[3],
         isViewAll: true,
       },
     ],
@@ -77,12 +70,9 @@ export default function DestinationHeroSection({
               playsInline
             >
               <source src={tripData.videoUrl} type="video/mp4" />
-              {/* Fallback image if video doesn't load */}
+              {/* Fallback to first image if video doesn't load */}
               <img
-                src={
-                  images[0] ||
-                  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                }
+                src={images[0]}
                 alt={tripData.title}
                 className="w-full h-full object-cover"
               />
@@ -114,12 +104,18 @@ export default function DestinationHeroSection({
                   category.isViewAll ? "cursor-pointer" : ""
                 } transition-transform duration-300 hover:scale-[1.02] active:scale-95`}
               >
-                <img
-                  src={category.image}
-                  alt={category.title}
-                  className="w-full h-full object-cover transition-all duration-300 hover:brightness-110"
-                />
-                <div className="absolute inset-0 bg-opacity-30 hover:bg-opacity-20 transition-all duration-300"></div>
+                {category.image ? (
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-full object-cover transition-all duration-300 hover:brightness-110"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <Image className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
+                <div className="absolute inset-0  bg-opacity-30 hover:bg-opacity-20 transition-all duration-300"></div>
                 <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4">
                   {category.isViewAll ? (
                     <div className="flex items-center space-x-1 sm:space-x-2 bg-white bg-opacity-90 px-2 py-1 sm:px-3 sm:py-2 rounded-lg hover:bg-opacity-100 transition-all duration-300">
@@ -196,11 +192,10 @@ export default function DestinationHeroSection({
                             : "text-gray-700"
                         }`}
                       >
-                        {item.days || item.days}
+                        {item.days}
                       </span>
                     </div>
                     <div className="text-xs sm:text-sm">
-                      
                       <div
                         className={`font-semibold transition-colors duration-300 whitespace-nowrap ${
                           hoveredDayIndex === index
@@ -208,7 +203,7 @@ export default function DestinationHeroSection({
                             : "text-gray-800"
                         }`}
                       >
-                        {item || item}
+                        {item.place}
                       </div>
                     </div>
                   </div>
@@ -230,7 +225,7 @@ export default function DestinationHeroSection({
                   {tripData.rating}
                 </span>
                 <span className="text-xs sm:text-sm text-gray-500">
-                  ({tripData.reviews})
+                  ({tripData.reviews} reviews)
                 </span>
               </div>
             </div>
@@ -239,15 +234,17 @@ export default function DestinationHeroSection({
             <div className="mb-4 sm:mb-6">
               <div className="flex items-baseline space-x-2 mb-1">
                 <span className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-                  INR {tripData.currentPrice.toLocaleString()}
+                  ₹{tripData.currentPrice.toLocaleString()}
                 </span>
                 <span className="text-xs sm:text-sm text-gray-500">
                   Per Adult
                 </span>
               </div>
-              <div className="text-xs sm:text-sm text-gray-400 line-through">
-                INR {tripData.originalPrice.toLocaleString()}
-              </div>
+              {tripData.originalPrice > 0 && (
+                <div className="text-xs sm:text-sm text-gray-400 line-through">
+                  ₹{tripData.originalPrice.toLocaleString()}
+                </div>
+              )}
             </div>
 
             {/* Send Enquiry Button */}

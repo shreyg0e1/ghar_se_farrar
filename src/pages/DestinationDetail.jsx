@@ -61,24 +61,52 @@ const DestinationDetailPage = () => {
     }
   }, [id]);
 
-  // Set initial selected tour when API data loads
-  useEffect(() => {
-    if (apiData?.packages?.length > 0) {
-      const firstPackage = apiData.packages[0];
-      if (firstPackage?.tours?.length > 0) {
-        setSelectedTour({
-          ...firstPackage.tours[0],
-          packageId: firstPackage._id,
-          packageName: firstPackage.name,
-        });
-      }
+  // Helper function to format itinerary for hero section
+  const prepareItineraryForHero = () => {
+    if (!selectedTour) return [];
+
+    // If you have plans data from API
+    if (selectedTour.plans && selectedTour.plans.length > 0) {
+      return selectedTour.plans.slice(0, 4).map((plan, index) => ({
+        days: index + 1,
+        place: plan,
+      }));
     }
-  }, [apiData]);
+
+    // Fallback based on destination routes
+    if (
+      selectedTour.destinationRoutes &&
+      selectedTour.destinationRoutes.length > 0
+    ) {
+      return selectedTour.destinationRoutes.slice(0, 4).map((route, index) => ({
+        days: index + 1,
+        place: route,
+      }));
+    }
+
+    // Final fallback based on duration
+    const durationMatch = selectedTour.duration?.match(/(\d+)/);
+    const days = durationMatch ? parseInt(durationMatch[0]) : 6;
+
+    return Array.from({ length: Math.min(days, 4) }, (_, index) => ({
+      days: index + 1,
+      place: `Day ${index + 1}`,
+    }));
+  };
+
+  // Helper to calculate original price
+  const calculateOriginalPrice = (currentPrice) => {
+    if (!currentPrice) return "28,799";
+    const priceNum = parseInt(currentPrice.toString().replace(/[^0-9]/g, ""));
+    return (priceNum * 1.2).toLocaleString();
+  };
 
   // Handle tour selection from PackageOptions
   const handleTourSelect = (tour, packageData) => {
+    // Transform the selected tour with categories
+    const transformedTour = transformTourData(tour);
     setSelectedTour({
-      ...tour,
+      ...transformedTour,
       packageId: packageData._id,
       packageName: packageData.name,
     });
@@ -86,51 +114,54 @@ const DestinationDetailPage = () => {
     window.scrollTo(0, 0);
   };
 
-  // Get all available tours from all packages
-  const getAllTours = () => {
-    if (!apiData?.packages) return [];
+  // Transform tour data to include categories structure
+  const transformTourData = (tour) => {
+    return {
+      ...tour,
+      categories: [
+        {
+          title: "Destinations",
+          image:
+            tour.images?.[0] ||
+            "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+        },
+        {
+          title: "Stays",
+          image:
+            tour.images?.[1] ||
+            "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          title: "Activity & Sightseeing",
+          image:
+            tour.images?.[2] ||
+            "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+        {
+          title: "View All Images",
+          image:
+            tour.images?.[3] ||
+            "https://images.unsplash.com/photo-1464822759844-dfa37c0ce7d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          isViewAll: true,
+        },
+      ],
+    };
+  };
 
-    const allTours = [];
-    apiData.packages.forEach((pkg) => {
-      pkg.tours.forEach((tour) => {
-        allTours.push({
-          ...tour,
-          packageId: pkg._id,
-          packageName: pkg.name,
+  // Set initial selected tour when API data loads
+  useEffect(() => {
+    if (apiData?.packages?.length > 0) {
+      const firstPackage = apiData.packages[0];
+      if (firstPackage?.tours?.length > 0) {
+        const transformedTour = transformTourData(firstPackage.tours[0]);
+        setSelectedTour({
+          ...transformedTour,
+          packageId: firstPackage._id,
+          packageName: firstPackage.name,
         });
-      });
-    });
-
-    return allTours;
-  };
-
-  // Prepare itinerary data from selected tour
-  const prepareItinerary = () => {
-    if (!selectedTour) return [];
-
-    // If API has proper itinerary data, use it
-    if (selectedTour.itineary && selectedTour.itineary.length > 0) {
-      return selectedTour.itineary.map((item, index) => ({
-        days: index + 1,
-        place: item.day || `Day ${index + 1}`,
-        details: item.details,
-      }));
+      }
     }
-
-    // Fallback: Create itinerary based on destination routes
-    
-
-    // Final fallback: Use duration to create basic itinerary
-    const durationMatch = selectedTour.duration?.match(/(\d+)/);
-    const days = durationMatch ? parseInt(durationMatch[0]) : 6;
-
-    const defaultPlaces = ["Leh", "Nubra Valley", "Pangong Tso", "Leh"];
-    return Array.from({ length: days }, (_, index) => ({
-      days: index + 1,
-      place: defaultPlaces[Math.min(index, defaultPlaces.length - 1)],
-      details: `Day ${index + 1} activities`,
-    }));
-  };
+  }, [apiData]);
 
   const renderTabContent = () => {
     if (!selectedTour) return null;
@@ -198,17 +229,14 @@ const DestinationDetailPage = () => {
         <DestinationHeroSection
           title={selectedTour.title}
           duration={selectedTour.durationThumbnail || selectedTour.duration}
-          itinerary={selectedTour.plans}
+          itinerary={prepareItineraryForHero()}
           price={selectedTour.price}
-          oldPrice={
-            (
-              parseInt(selectedTour.price?.replace(/[₹,]/g, "")) * 1.2
-            ).toLocaleString() || "28,799"
-          }
-          rating="4.8"
-          reviews="150"
-          images={selectedTour.images}
+          oldPrice={calculateOriginalPrice(selectedTour.price)}
+          rating={selectedTour.rating || "4.8"}
+          reviews={selectedTour.reviewCount || "150"}
+          images={selectedTour.images || []}
           video={selectedTour.video}
+          categories={selectedTour.categories}
         />
       </div>
 
