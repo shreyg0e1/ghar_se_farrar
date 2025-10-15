@@ -239,10 +239,10 @@ const DestinationPage = () => {
   const getActiveComponent = useCallback(() => {
     const tours = tourData[activeFilter] || [];
     const titles = {
-      bestSelling: "Best Selling Ladakh Tours",
-      groupTour: "Ladakh Group Trips - GSF Exclusive",
-      familyTours: "Top Family Trips to Ladakh",
-      romanticTrips: "Romantic Ladakh Tours for Couples",
+      bestSelling: "Best Selling Tours",
+      groupTour: "Group Trips - GSF Exclusive",
+      familyTours: "Top Family Trips",
+      romanticTrips: "Romantic Tours for Couples",
     };
 
     console.log(
@@ -267,10 +267,10 @@ const DestinationPage = () => {
       (key) => key !== activeFilter && tourData[key].length > 0
     );
     const titles = {
-      bestSelling: "Best Selling Ladakh Tours",
-      groupTour: "Ladakh Group Trips - GSF Exclusive",
-      familyTours: "Top Family Trips to Ladakh",
-      romanticTrips: "Romantic Ladakh Tours for Couples",
+      bestSelling: "Best Selling Tours",
+      groupTour: " Group Trips - GSF Exclusive",
+      familyTours: "Top Family Trips to ",
+      romanticTrips: "Romantic  Tours for Couples",
     };
 
     console.log("Rendering other components:", otherFilters);
