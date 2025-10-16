@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { User, Menu, X } from "lucide-react"; // 👤 type icon
 import { Link } from "react-router-dom";
 
+
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
