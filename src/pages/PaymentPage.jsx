@@ -225,90 +225,8 @@ const PaymentPage = () => {
             </div>
 
             {/* Add-ons */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-xl font-black text-gray-900 mb-4">
-                Add to Your Experience
-              </h3>
-              <div className="space-y-3">
-                {addOns.map((addon, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 hover:bg-orange-50 rounded-lg transition-colors duration-200"
-                  >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        checked={addon.selected}
-                        className="w-4 h-4 text-[#E65F25] rounded focus:ring-[#E65F25]"
-                        onChange={() => {}}
-                      />
-                      <span className="font-medium text-gray-700">
-                        {addon.name}
-                      </span>
-                    </div>
-                    <span className="font-semibold text-[#E65F25]">
-                      +{formatIndianRupees(addon.price)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+          
 
-            {/* Price Breakdown */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h3 className="text-xl font-black text-gray-900 mb-4">
-                Price Summary
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-gray-600">
-                  <span>Package Price</span>
-                  <span>{formatIndianRupees(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Travel Insurance</span>
-                  <span>{formatIndianRupees(insurance)}</span>
-                </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>GST (18%)</span>
-                  <span>{formatIndianRupees(tax)}</span>
-                </div>
-                <div className="border-t border-gray-200 pt-3">
-                  <div className="flex justify-between text-lg font-black">
-                    <span className="text-gray-900">Total Amount</span>
-                    <span className="text-[#E65F25]">
-                      {formatIndianRupees(total)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-2 text-right">
-                    Inclusive of all taxes
-                  </p>
-                </div>
-              </div>
-
-              {/* Indian Payment Icons */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-sm font-semibold text-gray-700 mb-3">
-                  We Accept:
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                    <span className="text-xs font-medium">VISA</span>
-                  </div>
-                  <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                    <span className="text-xs font-medium">MasterCard</span>
-                  </div>
-                  <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                    <span className="text-xs font-medium">Rupay</span>
-                  </div>
-                  <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                    <span className="text-xs font-medium">UPI</span>
-                  </div>
-                  <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                    <span className="text-xs font-medium">Net Banking</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right Column - Payment Form */}
@@ -659,7 +577,7 @@ const PaymentPage = () => {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                {/* <button
                   type="submit"
                   disabled={isProcessing}
                   className={`w-full py-4 px-6 rounded-xl font-black text-lg transition-all duration-300 ${
@@ -676,7 +594,7 @@ const PaymentPage = () => {
                   ) : (
                     `Pay ${formatIndianRupees(total)}`
                   )}
-                </button>
+                </button> */}
 
                 <p className="text-center text-sm text-gray-500">
                   By completing this purchase, you agree to our Terms of Service
