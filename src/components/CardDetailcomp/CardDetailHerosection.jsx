@@ -299,11 +299,12 @@ const CardDetailHeroSection = ({ destinationData = {} }) => {
 
           <button
             className="group bg-[#25D366] hover:bg-[#20ba5a] text-white 
-                           px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold 
-                           text-sm sm:text-base md:text-lg transition-all duration-300 
-                           hover:scale-105 hover:shadow-xl hover:shadow-[#25D366]/50 
-                           cursor-pointer flex items-center justify-center gap-2 sm:gap-3 
-                           active:scale-95 w-full xs:w-auto lg:w-[300px]"
+             px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold 
+             text-sm sm:text-base md:text-lg transition-all duration-300 
+             hover:scale-105 hover:shadow-xl hover:shadow-[#25D366]/50 
+             cursor-pointer flex items-center justify-center gap-2 sm:gap-3 
+             active:scale-95 w-full xs:w-auto lg:w-[300px]"
+            onClick={() => window.open(`https://wa.me/919773868499`, "_blank")}
           >
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-300" />
             Chat With Us
