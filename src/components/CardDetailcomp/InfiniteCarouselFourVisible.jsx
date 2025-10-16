@@ -16,23 +16,36 @@ import {
   Calendar,
 } from "lucide-react";
 
-const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
+const InfiniteCarouselFourVisible = ({ tours, title, id }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(4);
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
   const navigate = useNavigate();
 
-  // Memoize the tours to prevent unnecessary re-renders
+  // Memoize and validate tours
   const memoizedTours = useMemo(() => {
     console.log("Tours received:", tours);
-    return Array.isArray(tours) ? tours : [];
-  }, [tours]);
+    if (!Array.isArray(tours)) return [];
 
-  // Debug: Log when component renders
-  useEffect(() => {
-    console.log("Component rendered with tours:", memoizedTours.length);
-  }, [memoizedTours.length]);
+    // Filter out null/undefined tours and ensure unique tours by ID
+    const validTours = tours.filter(
+      (tour) => tour && (tour.id || tour._id || tour.pkgId)
+    );
+
+    // Remove duplicates based on ID
+    const uniqueTours = validTours.filter(
+      (tour, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            (t.id || t._id || t.pkgId) === (tour.id || tour._id || tour.pkgId)
+        )
+    );
+
+    console.log("Processed tours:", uniqueTours.length, uniqueTours);
+    return uniqueTours;
+  }, [tours]);
 
   // Update visible cards and mobile detection based on screen size
   useEffect(() => {
@@ -59,6 +72,8 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
   // Create infinite loop by duplicating tours only if we have tours
   const extendedTours = useMemo(() => {
     if (memoizedTours.length === 0) return [];
+
+    // Only duplicate once for infinite effect
     return [...memoizedTours, ...memoizedTours, ...memoizedTours];
   }, [memoizedTours]);
 
@@ -77,7 +92,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
     setCurrentIndex((prev) => prev - 1);
   }, []);
 
-  // Handle infinite loop
+  // Handle infinite loop - FIXED: Removed optional chaining assignment
   useEffect(() => {
     if (memoizedTours.length === 0) return;
 
@@ -86,11 +101,35 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
     if (currentIndex >= totalTours * 2) {
       const timer = setTimeout(() => {
         setCurrentIndex(totalTours);
+        // Force re-render to reset position smoothly
+        setTimeout(() => {
+          if (containerRef.current && containerRef.current.style) {
+            containerRef.current.style.transition = "none";
+          }
+          setCurrentIndex(totalTours);
+          setTimeout(() => {
+            if (containerRef.current && containerRef.current.style) {
+              containerRef.current.style.transition = "";
+            }
+          }, 50);
+        }, 50);
       }, 50);
       return () => clearTimeout(timer);
     } else if (currentIndex < totalTours) {
       const timer = setTimeout(() => {
         setCurrentIndex(totalTours * 2 - 1);
+        // Force re-render to reset position smoothly
+        setTimeout(() => {
+          if (containerRef.current && containerRef.current.style) {
+            containerRef.current.style.transition = "none";
+          }
+          setCurrentIndex(totalTours * 2 - 1);
+          setTimeout(() => {
+            if (containerRef.current && containerRef.current.style) {
+              containerRef.current.style.transition = "";
+            }
+          }, 50);
+        }, 50);
       }, 50);
       return () => clearTimeout(timer);
     }
@@ -120,7 +159,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
 
   // Memoized TourCard component to prevent unnecessary re-renders
   const TourCard = useCallback(
-    ({ tour }) => (
+    ({ tour, index }) => (
       <div
         onClick={() => handleCardClick(tour)}
         className="group relative bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-xl sm:hover:shadow-2xl transform hover:-translate-y-1 sm:hover:-translate-y-2 transition-all duration-500 cursor-pointer h-full flex flex-col active:scale-95 sm:active:scale-100"
@@ -245,6 +284,7 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
   // Calculate card width based on visible cards
   const cardWidth = 100 / visibleCards;
 
+  // Show "No tours available" only if there are genuinely no tours
   if (memoizedTours.length === 0) {
     return (
       <div className="py-8 sm:py-12">
@@ -313,11 +353,11 @@ const InfiniteCarouselFourVisible = ({ tours = [], title, id }) => {
             >
               {extendedTours.map((tour, index) => (
                 <div
-                  key={`${tour.id || tour._id}-${index}`}
+                  key={`${tour.id || tour._id || tour.pkgId}-${index}`}
                   className="flex-none"
                   style={{ width: `calc(${cardWidth}% - 12px)` }}
                 >
-                  <TourCard tour={tour} />
+                  <TourCard tour={tour} index={index} />
                 </div>
               ))}
             </div>

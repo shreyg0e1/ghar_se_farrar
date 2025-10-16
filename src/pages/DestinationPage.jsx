@@ -236,55 +236,63 @@ const DestinationPage = () => {
     }, 100);
   }, []);
 
-  const getActiveComponent = useCallback(() => {
-    const tours = tourData[activeFilter] || [];
-    const titles = {
-      bestSelling: "Best Selling Tours",
-      groupTour: "Group Trips - GSF Exclusive",
-      familyTours: "Top Family Trips",
-      romanticTrips: "Romantic Tours for Couples",
-    };
+const getActiveComponent = useCallback(() => {
+  const tours = tourData[activeFilter] || [];
+  const titles = {
+    bestSelling: "Best Selling Tours",
+    groupTour: "Group Trips - GSF Exclusive",
+    familyTours: "Top Family Trips",
+    romanticTrips: "Romantic Tours for Couples",
+  };
 
-    console.log(
-      `Rendering active component for ${activeFilter}:`,
-      tours.length,
-      "tours"
-    );
-
+  // Only render if there are tours
+  if (tours.length === 0) {
     return (
-      <div ref={activeComponentRef} className="px-3 sm:px-4">
-        <InfiniteCarouselFourVisible
-          tours={tours}
-          title={titles[activeFilter]}
-          id={detailsId}
-        />
+      <div ref={activeComponentRef} className="px-3 sm:px-4 text-center py-12">
+        <p className="text-gray-600">
+          No {titles[activeFilter]} available at the moment.
+        </p>
       </div>
     );
-  }, [activeFilter, tourData, detailsId]);
+  }
 
-  const getOtherComponents = useCallback(() => {
-    const otherFilters = Object.keys(tourData).filter(
-      (key) => key !== activeFilter && tourData[key].length > 0
-    );
-    const titles = {
-      bestSelling: "Best Selling Tours",
-      groupTour: " Group Trips - GSF Exclusive",
-      familyTours: "Top Family Trips to ",
-      romanticTrips: "Romantic  Tours for Couples",
-    };
+  return (
+    <div ref={activeComponentRef} className="px-3 sm:px-4">
+      <InfiniteCarouselFourVisible
+        tours={tours}
+        title={titles[activeFilter]}
+        id={detailsId}
+      />
+    </div>
+  );
+}, [activeFilter, tourData, detailsId]);
 
-    console.log("Rendering other components:", otherFilters);
 
-    return otherFilters.map((filterKey) => (
-      <div key={filterKey} className="px-3 sm:px-4">
-        <InfiniteCarouselFourVisible
-          tours={tourData[filterKey]}
-          title={titles[filterKey]}
-          id={detailsId}
-        />
-      </div>
-    ));
-  }, [activeFilter, tourData, detailsId]);
+const getOtherComponents = useCallback(() => {
+  const otherFilters = Object.keys(tourData).filter(
+    (key) => key !== activeFilter && tourData[key].length > 0
+  );
+
+  // If no other components have tours, don't render anything
+  if (otherFilters.length === 0) return null;
+
+  const titles = {
+    bestSelling: "Best Selling Tours",
+    groupTour: "Group Trips - GSF Exclusive",
+    familyTours: "Top Family Trips",
+    romanticTrips: "Romantic Tours for Couples",
+  };
+
+  return otherFilters.map((filterKey) => (
+    <div key={filterKey} className="px-3 sm:px-4">
+      <InfiniteCarouselFourVisible
+        tours={tourData[filterKey]}
+        title={titles[filterKey]}
+        id={detailsId}
+      />
+    </div>
+  ));
+}, [activeFilter, tourData, detailsId]);
 
   // Debug effect to log renders
   useEffect(() => {

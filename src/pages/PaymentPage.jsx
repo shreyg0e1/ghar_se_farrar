@@ -105,30 +105,30 @@ const PaymentPage = () => {
   ];
 
   const paymentMethods = [
-    {
-      id: "card",
-      name: "Credit/Debit Card",
-      icon: "💳",
-      description: "Pay securely with your card",
-    },
-    {
-      id: "upi",
-      name: "UPI Payment",
-      icon: "📱",
-      description: "Instant payment with UPI",
-    },
+    // {
+    //   id: "card",
+    //   name: "Credit/Debit Card",
+    //   icon: "💳",
+    //   description: "Pay securely with your card",
+    // },
+    // {
+    //   id: "upi",
+    //   name: "UPI Payment",
+    //   icon: "📱",
+    //   description: "Instant payment with UPI",
+    // },
     {
       id: "bank",
       name: "Bank Transfer",
       icon: "🏦",
       description: "Direct bank transfer",
     },
-    {
-      id: "razorpay",
-      name: "Razorpay",
-      icon: "🛡️",
-      description: "Secure Razorpay gateway",
-    },
+    // {
+    //   id: "razorpay",
+    //   name: "Razorpay",
+    //   icon: "🛡️",
+    //   description: "Secure Razorpay gateway",
+    // },
   ];
 
   const subtotal = selectedPackage.price;
