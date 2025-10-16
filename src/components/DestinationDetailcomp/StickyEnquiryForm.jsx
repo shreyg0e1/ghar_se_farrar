@@ -21,6 +21,7 @@ export default function StickyEnquiryForm({
 
   // Get tour information for the form
   const getTourInfo = () => {
+    console.log("This is the tour DATA->", tourData);
     if (!tourData) {
       return {
         title: "Leh Ladakh Adventure",
@@ -34,6 +35,8 @@ export default function StickyEnquiryForm({
       price: tourData.price,
       location: tourData.location,
       duration: tourData.duration,
+      price: tourData.price,
+      packageName: tourData.title,
     };
   };
 
@@ -65,8 +68,8 @@ export default function StickyEnquiryForm({
         traveller: parseInt(formData.travellerCount) || 1,
         message: formData.message,
         tourTitle: tourInfo.title,
-        tourPrice: tourInfo.price,
-        tourLocation: tourInfo.location,
+        price: tourInfo.price,
+        packageName: tourInfo.packageName,
         submittedAt: new Date().toISOString(),
       };
 

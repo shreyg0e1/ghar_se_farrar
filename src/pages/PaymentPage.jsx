@@ -556,20 +556,23 @@ const PaymentPage = () => {
                         </h4>
                         <div className="text-sm text-blue-800 space-y-1">
                           <p>
-                            <strong>Bank:</strong> HDFC Bank
+                            <strong>Bank:</strong> Bank of Maharashtra
                           </p>
                           <p>
-                            <strong>Account Name:</strong> Gharsefaraar Travels
-                            Pvt Ltd
+                            <strong>Account Name:</strong> Ghar Se Faraar Pvt
+                            Ltd
                           </p>
                           <p>
-                            <strong>Account Number:</strong> 50100234567891
+                            <strong>Account Number:</strong> 60545121417
                           </p>
                           <p>
-                            <strong>IFSC:</strong> HDFC0000123
+                            <strong>IFSC:</strong> MAHB0001244
                           </p>
                           <p>
                             <strong>Branch:</strong> Connaught Place, New Delhi
+                          </p>
+                          <p>
+                            <strong>Account Type:</strong> Current
                           </p>
                         </div>
                       </div>
