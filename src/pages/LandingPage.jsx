@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Header from "../components/Landingpagecomp/header";
 import PlanByInterest from "../components/Landingpagecomp/byinterest";
 import Footer from "../components/Landingpagecomp/footer";
@@ -18,6 +18,7 @@ function LandingPage({
   loading,
   error,
 }) {
+   const contactRef = useRef(null);
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-white relative">
@@ -79,11 +80,10 @@ function LandingPage({
 
         {/* Contact + Footer full width */}
         <div className="w-full">
-          <Faraarnama />
+          <Faraarnama contactRef={contactRef} />
           <Customiseform />
           <BuzzSection />
-          <ContactUs />
-         
+          <ContactUs ref={contactRef} />
         </div>
       </div>
     </div>

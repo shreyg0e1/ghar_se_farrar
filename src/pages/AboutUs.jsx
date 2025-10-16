@@ -56,7 +56,7 @@ export default function AboutUs() {
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <section className="h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4">
+      {/* <section className="h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-7xl md:text-9xl font-black text-gray-900 mb-6 tracking-tight">
             ABOUT US
@@ -65,7 +65,7 @@ export default function AboutUs() {
             Creating Unforgettable Travel Experiences
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* Founder Section - Purple/Pink Theme - Single Viewport */}
       <section className="h-screen flex items-center px-4 bg-gradient-to-br from-purple-100 via-pink-50 to-white relative overflow-hidden">
@@ -316,8 +316,8 @@ export default function AboutUs() {
       </section>
 
       {/* Tech Lead Section - Orange Theme - Single Viewport */}
-      <section className="h-screen flex items-center px-4 bg-gradient-to-br from-[#E65F25] via-orange-500 to-red-500 relative overflow-hidden">
-        {/* Torn Paper Effect Top */}
+      {/* <section className="h-screen flex items-center px-4 bg-gradient-to-br from-[#E65F25] via-orange-500 to-red-500 relative overflow-hidden">
+      
         <div
           className="absolute top-0 left-0 right-0 h-16 bg-white"
           style={{
@@ -339,7 +339,7 @@ export default function AboutUs() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 items-center">
-            {/* Image Side - Updated with exact image ratio and new design */}
+            
             <div className="relative group h-[65vh] flex items-center">
               <div className="relative bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl p-6 transform group-hover:rotate-2 transition-all duration-500 shadow-2xl w-full">
                 <div className="bg-white rounded-2xl overflow-hidden relative">
@@ -349,7 +349,7 @@ export default function AboutUs() {
                     className="w-full h-[380px] object-cover transform group-hover:scale-105 transition-transform duration-700 relative z-10"
                   />
 
-                  {/* Social Media Overlay Bottom */}
+                  
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-5 z-20">
                     <h3 className="text-white text-lg font-black mb-3">
                       Shrey Goel
@@ -403,7 +403,7 @@ export default function AboutUs() {
               </div>
             </div>
 
-            {/* Content Side */}
+            
             <div className="space-y-5">
               <div>
                 <h2 className="text-5xl md:text-6xl font-black text-white mb-4 leading-none">
@@ -448,7 +448,7 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Torn Paper Effect Bottom */}
+       
         <div
           className="absolute bottom-0 left-0 right-0 h-16 bg-gray-900"
           style={{
@@ -456,10 +456,10 @@ export default function AboutUs() {
               "polygon(0 50%, 5% 0, 10% 50%, 15% 0, 20% 50%, 25% 0, 30% 50%, 35% 0, 40% 50%, 45% 0, 50% 50%, 55% 0, 60% 50%, 65% 0, 70% 50%, 75% 0, 80% 50%, 85% 0, 90% 50%, 95% 0, 100% 50%, 100% 100%, 0 100%)",
           }}
         ></div>
-      </section>
+      </section> */}
 
-      {/* Team Cards Section */}
-      <section className="min-h-screen flex items-center py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+      
+      {/* <section className="min-h-screen flex items-center py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto w-full">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-4">
@@ -477,14 +477,14 @@ export default function AboutUs() {
                 key={employee.id}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer overflow-hidden border border-gray-100"
               >
-                {/* Image Container */}
+               
                 <div className="relative overflow-hidden h-64">
                   <img
                     src={employee.image}
                     alt={employee.name}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                   />
-                  {/* Overlay on hover */}
+                  
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500 flex items-center justify-center">
                     <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 text-white text-center p-4">
                       <p className="text-sm font-medium">{employee.about}</p>
@@ -492,7 +492,7 @@ export default function AboutUs() {
                   </div>
                 </div>
 
-                {/* Content */}
+            
                 <div className="p-6">
                   <h3 className="text-xl font-black text-gray-900 mb-1">
                     {employee.name}
@@ -501,7 +501,7 @@ export default function AboutUs() {
                     {employee.profession}
                   </p>
 
-                  {/* Social Icons */}
+                
                   <div className="flex gap-3">
                     <a
                       href={employee.instagram}
@@ -537,7 +537,7 @@ export default function AboutUs() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Mission Section */}
       <section className="min-h-screen flex items-center py-20 px-4 bg-gray-900 text-white">
