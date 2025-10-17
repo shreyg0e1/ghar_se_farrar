@@ -22,7 +22,7 @@ export default function DestinationHeroSection({
 }) {
   const [hoveredDayIndex, setHoveredDayIndex] = useState(null);
   const [showMobileItinerary, setShowMobileItinerary] = useState(false);
-
+  const [isDownloading, setIsDownloading] = useState(false);
   // Use props directly without static fallbacks
   const tripData = {
     title: title,
@@ -55,6 +55,44 @@ export default function DestinationHeroSection({
     ],
   };
 
+  const handleDownload = async () => {
+    setIsDownloading(true);
+
+    try {
+      const fileId = "1__f6d4C293ENdSa3hSUH8YdDFtOynMNq";
+      const directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+      // Method 1: Direct download
+      const link = document.createElement("a");
+      link.href = directDownloadUrl;
+      link.setAttribute("download", "Travel_Itinerary.pdf");
+      link.setAttribute("target", "_blank");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // If direct download doesn't work, open in new tab after a delay
+      setTimeout(() => {
+        if (!document.querySelector('a[href*="download"]')) {
+          window.open(
+            "https://drive.google.com/file/d/1__f6d4C293ENdSa3hSUH8YdDFtOynMNq/view?usp=sharing",
+            "_blank"
+          );
+        }
+      }, 1000);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // Fallback to opening in new tab
+      window.open(
+        "https://drive.google.com/file/d/1__f6d4C293ENdSa3hSUH8YdDFtOynMNq/view?usp=sharing",
+        "_blank"
+      );
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+
   return (
     <div className="max-w-7xl mx-auto p-3 sm:p-4 md:p-6 bg-white font-inter">
       {/* Main Layout - Stack on mobile, grid on desktop */}
@@ -81,9 +119,21 @@ export default function DestinationHeroSection({
             {/* Download Itinerary & Share Button - positioned at bottom center of video */}
             <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 z-10">
               {/* Download Itinerary Button */}
-              <button className="group/download bg-[#E65F25] hover:bg-[#FF6F35] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg flex items-center space-x-1 sm:space-x-2 backdrop-blur-sm bg-opacity-90 hover:bg-opacity-100 cursor-pointer active:scale-95">
-                <Download className="w-3 h-3 sm:w-4 sm:h-4 transition-all duration-300 group-hover/download:animate-bounce group-hover/download:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                <span>Download Itinerary</span>
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="group/download bg-[#E65F25] hover:bg-[#FF6F35] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg flex items-center space-x-1 sm:space-x-2 backdrop-blur-sm bg-opacity-90 hover:bg-opacity-100 cursor-pointer active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <Download
+                  className={`w-3 h-3 sm:w-4 sm:h-4 transition-all duration-300 ${
+                    isDownloading
+                      ? "animate-spin"
+                      : "group-hover/download:animate-bounce group-hover/download:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                  }`}
+                />
+                <span>
+                  {isDownloading ? "Downloading..." : "Download Itinerary"}
+                </span>
               </button>
 
               {/* Share Button */}

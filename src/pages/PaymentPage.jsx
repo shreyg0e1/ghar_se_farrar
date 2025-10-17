@@ -2,18 +2,6 @@ import React, { useState } from "react";
 
 const PaymentPage = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    cardholderName: "",
-    country: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    upiId: "",
     bankAccount: "",
   });
 
@@ -26,7 +14,7 @@ const PaymentPage = () => {
     image: "/images/bali-package.jpg",
   });
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("card");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("bank");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleInputChange = (e) => {
@@ -34,28 +22,6 @@ const PaymentPage = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
-
-  const handleCardNumberChange = (e) => {
-    let value = e.target.value.replace(/\s/g, "").replace(/\D/g, "");
-    if (value.length > 0) {
-      value = value.match(new RegExp(".{1,4}", "g")).join(" ");
-    }
-    setFormData((prev) => ({
-      ...prev,
-      cardNumber: value,
-    }));
-  };
-
-  const handleExpiryChange = (e) => {
-    let value = e.target.value.replace(/\D/g, "");
-    if (value.length >= 2) {
-      value = value.slice(0, 2) + "/" + value.slice(2, 4);
-    }
-    setFormData((prev) => ({
-      ...prev,
-      expiryDate: value,
     }));
   };
 
@@ -105,30 +71,12 @@ const PaymentPage = () => {
   ];
 
   const paymentMethods = [
-    // {
-    //   id: "card",
-    //   name: "Credit/Debit Card",
-    //   icon: "💳",
-    //   description: "Pay securely with your card",
-    // },
-    // {
-    //   id: "upi",
-    //   name: "UPI Payment",
-    //   icon: "📱",
-    //   description: "Instant payment with UPI",
-    // },
     {
       id: "bank",
       name: "Bank Transfer",
       icon: "🏦",
       description: "Direct bank transfer",
     },
-    // {
-    //   id: "razorpay",
-    //   name: "Razorpay",
-    //   icon: "🛡️",
-    //   description: "Secure Razorpay gateway",
-    // },
   ];
 
   const subtotal = selectedPackage.price;
@@ -225,8 +173,6 @@ const PaymentPage = () => {
             </div>
 
             {/* Add-ons */}
-          
-
           </div>
 
           {/* Right Column - Payment Form */}
@@ -265,272 +211,42 @@ const PaymentPage = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Personal Information */}
+                {/* Bank Transfer Details */}
                 <div>
                   <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
                     <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
                       <span className="text-white font-bold text-sm">2</span>
                     </div>
-                    Personal Information
+                    Bank Transfer Details
                   </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                        placeholder="+91 98765 43210"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Country *
-                      </label>
-                      <select
-                        name="country"
-                        value={formData.country}
-                        onChange={handleInputChange}
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                      >
-                        <option value="">Select Country</option>
-                        <option value="IN">India</option>
-                        <option value="US">United States</option>
-                        <option value="UK">United Kingdom</option>
-                        <option value="AU">Australia</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Method Specific Forms */}
-                {selectedPaymentMethod === "card" && (
-                  <div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                      <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">3</span>
-                      </div>
-                      Card Details
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Card Number *
-                        </label>
-                        <input
-                          type="text"
-                          name="cardNumber"
-                          value={formData.cardNumber}
-                          onChange={handleCardNumberChange}
-                          required
-                          maxLength={19}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                          placeholder="1234 5678 9012 3456"
-                        />
-                      </div>
-                      <div className="grid md:grid-cols-3 gap-4">
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Expiry Date *
-                          </label>
-                          <input
-                            type="text"
-                            name="expiryDate"
-                            value={formData.expiryDate}
-                            onChange={handleExpiryChange}
-                            required
-                            maxLength={5}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                            placeholder="MM/YY"
-                          />
-                        </div>
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            CVV *
-                          </label>
-                          <input
-                            type="text"
-                            name="cvv"
-                            value={formData.cvv}
-                            onChange={handleInputChange}
-                            required
-                            maxLength={4}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                            placeholder="123"
-                          />
-                        </div>
-                        <div className="md:col-span-1">
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Cardholder Name *
-                          </label>
-                          <input
-                            type="text"
-                            name="cardholderName"
-                            value={formData.cardholderName}
-                            onChange={handleInputChange}
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                            placeholder="As on card"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedPaymentMethod === "upi" && (
-                  <div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                      <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">3</span>
-                      </div>
-                      UPI Payment
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          UPI ID *
-                        </label>
-                        <input
-                          type="text"
-                          name="upiId"
-                          value={formData.upiId}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                          placeholder="yourname@upi"
-                        />
-                      </div>
-                      <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                        <p className="text-sm text-orange-800">
-                          💡 <strong>Popular UPI Apps:</strong> Google Pay,
-                          PhonePe, Paytm, BHIM UPI
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <h4 className="font-semibold text-blue-900 mb-2">
+                        Bank Details for Transfer:
+                      </h4>
+                      <div className="text-sm text-blue-800 space-y-1">
+                        <p>
+                          <strong>Bank:</strong> Bank of Maharashtra
+                        </p>
+                        <p>
+                          <strong>Account Name:</strong> Ghar Se Faraar Pvt Ltd
+                        </p>
+                        <p>
+                          <strong>Account Number:</strong> 60545121417
+                        </p>
+                        <p>
+                          <strong>IFSC:</strong> MAHB0001244
+                        </p>
+                        <p>
+                          <strong>Branch:</strong> Dwarka Sector 19
+                        </p>
+                        <p>
+                          <strong>Account Type:</strong> Current
                         </p>
                       </div>
                     </div>
                   </div>
-                )}
-
-                {selectedPaymentMethod === "bank" && (
-                  <div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                      <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">3</span>
-                      </div>
-                      Bank Transfer Details
-                    </h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Bank Account Number *
-                        </label>
-                        <input
-                          type="text"
-                          name="bankAccount"
-                          value={formData.bankAccount}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#E65F25] focus:border-transparent transition-all duration-300"
-                          placeholder="Enter account number"
-                        />
-                      </div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <h4 className="font-semibold text-blue-900 mb-2">
-                          Bank Details for Transfer:
-                        </h4>
-                        <div className="text-sm text-blue-800 space-y-1">
-                          <p>
-                            <strong>Bank:</strong> Bank of Maharashtra
-                          </p>
-                          <p>
-                            <strong>Account Name:</strong> Ghar Se Faraar Pvt
-                            Ltd
-                          </p>
-                          <p>
-                            <strong>Account Number:</strong> 60545121417
-                          </p>
-                          <p>
-                            <strong>IFSC:</strong> MAHB0001244
-                          </p>
-                          <p>
-                            <strong>Branch:</strong> Connaught Place, New Delhi
-                          </p>
-                          <p>
-                            <strong>Account Type:</strong> Current
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedPaymentMethod === "razorpay" && (
-                  <div>
-                    <h3 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
-                      <div className="w-8 h-8 bg-[#E65F25] rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">3</span>
-                      </div>
-                      Razorpay Secure Gateway
-                    </h3>
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-                      <div className="text-4xl mb-4">🛡️</div>
-                      <h4 className="font-bold text-green-900 text-lg mb-2">
-                        Secure Payment Gateway
-                      </h4>
-                      <p className="text-green-800 mb-4">
-                        You will be redirected to Razorpay's secure payment page
-                        to complete your transaction safely.
-                      </p>
-                      <div className="flex justify-center gap-4">
-                        <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
-                          <span className="text-xs font-medium">PCI DSS</span>
-                        </div>
-                        <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
-                          <span className="text-xs font-medium">
-                            256-bit SSL
-                          </span>
-                        </div>
-                        <div className="bg-white px-3 py-2 rounded-lg shadow-sm">
-                          <span className="text-xs font-medium">3D Secure</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                </div>
 
                 {/* Security Badges */}
                 <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">

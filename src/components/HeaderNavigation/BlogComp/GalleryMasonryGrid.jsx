@@ -55,11 +55,6 @@ const GalleryMasonryGrid = ({
   const [hoveredImage, setHoveredImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Function to calculate grid row span
-  const getGridRowSpan = (span) => {
-    return `span ${span}`;
-  };
-
   return (
     <div
       className="w-full min-h-screen py-12 px-4 mt-10"
@@ -83,7 +78,7 @@ const GalleryMasonryGrid = ({
               key={image.id}
               className="group cursor-pointer relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500"
               style={{
-                gridRowEnd: getGridRowSpan(image.span),
+                gridRowEnd: `span ${image.span}`,
                 border: "2px solid transparent",
               }}
               onMouseEnter={() => setHoveredImage(image.id)}
@@ -189,9 +184,9 @@ const GalleryMasonryGrid = ({
         </div>
       )}
 
-      <style jsx>{`
-        @import url("https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap");
-
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap');
+        
         @keyframes shimmer {
           0% {
             background-position: -200% 0;
@@ -200,7 +195,7 @@ const GalleryMasonryGrid = ({
             background-position: 200% 0;
           }
         }
-
+        
         .animate-shimmer {
           animation: shimmer 2s infinite;
         }
@@ -215,7 +210,7 @@ const GalleryMasonryGrid = ({
             transform: scale(1);
           }
         }
-
+        
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-out;
         }
